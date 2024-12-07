@@ -23,6 +23,7 @@
 
   # System Packages
   environment.systemPackages = with pkgs; [
+    nil
     nixpkgs-fmt
     google-chrome
     vscode
@@ -43,7 +44,6 @@
     font-manager
     jetbrains-mono
     vistafonts-chs
-    hello
   ];
 
   # Fonts Configuration
