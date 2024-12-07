@@ -10,12 +10,16 @@
   # Hostname
   networking.hostName = "nixos";
 
+  imports = [
+    ./hardware-configuration.nix
+  ];
+
   # Timezone and Locale
   time.timeZone = "America/Toronto";
   i18n.defaultLocale = "en_CA.UTF-8";
 
   # NixOS Version (stateVersion)
-  system.stateVersion = "24.11"; 
+  system.stateVersion = "24.11";
 
   # System Packages
   environment.systemPackages = with pkgs; [
@@ -39,14 +43,15 @@
     font-manager
     jetbrains-mono
     vistafonts-chs
+    hello
   ];
 
   # Fonts Configuration
   fonts.fonts = with pkgs; [
     jetbrains-mono
-    vistafonts-chs  
+    vistafonts-chs
   ];
-  
+
   # Shell Aliases
   programs.bash.shellAliases = {
     ll = "ls -l";

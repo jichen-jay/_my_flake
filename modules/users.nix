@@ -7,8 +7,12 @@
   };
 
   # Auto-login
-  services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "jaykchen";
+services.xserver.displayManager.autoLogin.enable = true;
+services.xserver.displayManager.autoLogin.user = "jaykchen";
+
+# services.xserver.displayManager.lightdm.enable = true;
+# services.xserver.desktopManager.xfce.enable = true;
+
 
   # User Packages (if any)
   users.users.jaykchen.packages = with pkgs; [
