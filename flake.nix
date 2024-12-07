@@ -3,8 +3,7 @@
   description = "NixOS configuration with flakes";
 
   inputs = {
-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     nixos-vscode-server.url = "github:nix-community/nixos-vscode-server";
   };
@@ -18,8 +17,7 @@ nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
         inherit system;
 
-modules = [
-
+        modules = [
           ./modules/system.nix
           ./modules/services.nix
           ./modules/users.nix
