@@ -7,10 +7,8 @@
   };
 
   # Auto-login
-services.displayManager.autoLogin.enable = true;
-services.displayManager.autoLogin.user = "jaykchen";
-
-
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "jaykchen";
 
   # User Packages (if any)
   users.users.jaykchen.packages = with pkgs; [
