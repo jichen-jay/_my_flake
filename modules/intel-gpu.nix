@@ -29,6 +29,6 @@
   # Add utilities for verification
   environment.systemPackages = with pkgs; [
     clinfo # OpenCL platform verification
-    vainfo # Video acceleration verification
+    libva-utils
   ];
 }
