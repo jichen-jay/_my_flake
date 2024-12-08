@@ -52,7 +52,7 @@
   ];
 
   # Fonts Configuration
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
     jetbrains-mono
     vistafonts-chs
   ];
