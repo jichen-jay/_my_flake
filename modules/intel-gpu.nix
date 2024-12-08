@@ -7,13 +7,28 @@
   hardware.opengl = {
     enable = true;
     extraPackages = with pkgs; [
-      intel-compute-runtime # For OpenCL/SYCL support
-      intel-ocl # Intel OpenCL ICD
+      # Compute support
+      intel-compute-runtime
+      intel-ocl
+
+      # Video acceleration
+      intel-media-driver # VAAPI driver
+      intel-vaapi-driver
+      libva
+      libva-utils
+      vpl-gpu-rt # OneVPL runtime
+      libvdpau-va-gl
     ];
+  };
+
+  # Video acceleration settings
+  environment.sessionVariables = {
+    LIBVA_DRIVER_NAME = "iHD";
   };
 
   # Add utilities for verification
   environment.systemPackages = with pkgs; [
     clinfo # OpenCL platform verification
+    vainfo # Video acceleration verification
   ];
 }
