@@ -38,12 +38,17 @@
     steam-run
     btop
     cmake
-    gcc_multi
+    # gcc_multi
     file
     xclip
     font-manager
     jetbrains-mono
     vistafonts-chs
+    # to build llama
+    gnumake # Unix Makefiles build system
+    ninja # Alternative build system
+    gcc # Ensure base gcc is installed
+    binutils # Required build tools
   ];
 
   # Fonts Configuration
