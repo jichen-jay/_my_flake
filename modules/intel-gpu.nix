@@ -4,7 +4,7 @@
   boot.kernelModules = [ "i915" ];
 
   # Configure OpenGL and compute packages
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
     extraPackages = with pkgs; [
       # Compute support
