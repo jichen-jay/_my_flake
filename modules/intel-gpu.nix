@@ -10,6 +10,7 @@
       # Compute support
       intel-compute-runtime
       intel-ocl
+      mkl
 
       # Video acceleration
       intel-media-driver # VAAPI driver
