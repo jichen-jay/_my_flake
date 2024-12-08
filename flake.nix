@@ -19,6 +19,7 @@
 
         modules = [
           ./modules/system.nix
+          ./modules/intel-gpu.nix
           ./modules/services.nix
           ./modules/users.nix
           nixos-vscode-server.nixosModules.default
