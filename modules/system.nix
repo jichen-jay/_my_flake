@@ -75,6 +75,8 @@
       email = "jaykchen@icloud.com"
   '';
 
+  programs.direnv.enable = true;
+
   programs.git = {
     enable = true;
     lfs.enable = true;
