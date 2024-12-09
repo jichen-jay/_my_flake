@@ -5,6 +5,7 @@
     gsettings-desktop-schemas
     xfce.xfconf
     xfce.xfce4-settings
+    glib
   ];
 
   # Enable required services
