@@ -49,6 +49,7 @@
     ninja # Alternative build system
     gcc # Ensure base gcc is installed
     binutils # Required build tools
+    xdg-utils
   ];
 
   # Fonts Configuration
