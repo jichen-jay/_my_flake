@@ -1,8 +1,8 @@
 { config, pkgs, ... }: {
   environment.systemPackages = with pkgs; [
     xfce.xfce4-genmon-plugin
+    gnome-settings-daemon
     gsettings-desktop-schemas
-    gnome.gnome-settings-daemon
     xfconf
   ];
 
