@@ -3,7 +3,7 @@
     xfce.xfce4-genmon-plugin
     gnome-settings-daemon
     gsettings-desktop-schemas
-    xfconf
+    xfce.xfconf
   ];
 
   # Enable required services
@@ -13,5 +13,6 @@
   };
 
   # Ensure xfconf is available
-  programs.dconf.enable = true;
+  programs.xfconf.enable = true;
+  # programs.dconf.enable = true;
 }
