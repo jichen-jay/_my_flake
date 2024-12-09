@@ -3,7 +3,7 @@
   # Enable Intel GPU kernel module
   boot.kernelModules = [ "i915" ];
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages;
   # Configure OpenGL and compute packages
   hardware.graphics = {
     enable = true;
