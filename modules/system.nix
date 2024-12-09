@@ -1,7 +1,12 @@
 { config, pkgs, ... }: {
   # Nix settings
   nixpkgs.config.allowUnfree = true;
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+    max-jobs = "auto"; # Safe CPU utilization
+    trusted-users = [ "root" "@wheel" ];
+  };
 
   # Bootloader
   boot.loader.systemd-boot.enable = true;
