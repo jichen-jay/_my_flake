@@ -20,6 +20,7 @@
         modules = [
           ./modules/system.nix
           ./modules/dark-theme.nix
+          ./modules/desktop-entry.nix
           ./modules/access-shared-drive.nix
           ./modules/intel-gpu.nix
           ./modules/services.nix
