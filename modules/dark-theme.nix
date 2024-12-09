@@ -4,6 +4,7 @@
     gnome-settings-daemon
     gsettings-desktop-schemas
     xfce.xfconf
+    xfce.xfce4-settings
   ];
 
   # Enable required services
@@ -12,7 +13,18 @@
     desktopManager.xfce.enable = true;
   };
 
-  # Ensure xfconf is available
-  programs.xfconf.enable = true;
-  # programs.dconf.enable = true;
+  # Enable dconf (needed for gsettings)
+  programs = {
+    xfconf.enable = true;
+    dconf.enable = true; # Add this
+  };
+
+  # not needed in pure Nixos
+  # environment.sessionVariables = {
+  #   XDG_DATA_DIRS = [
+  #     "${config.system.path}/share"
+  #     "$HOME/.nix-profile/share"
+  #     "$HOME/.share" # Add this
+  #   ];
+  # };
 }
