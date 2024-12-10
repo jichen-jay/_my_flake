@@ -19,7 +19,7 @@
 
         modules = [
           ./modules/system.nix
-          ./modules/fhs-python.nix
+          # ./modules/fhs-python.nix
           ./modules/dark-theme.nix
           ./modules/desktop-entry.nix
           ./modules/access-shared-drive.nix
