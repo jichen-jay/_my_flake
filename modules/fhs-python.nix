@@ -5,9 +5,7 @@ let
   myFhs = pkgs.buildFHSUserEnv {
     name = "fhs-python-env";
     targetPkgs = pkgs: (with pkgs; [
-      # List of packages to be available in the FHS environment
       python311
-      # Add other packages you need here
     ]);
     runScript = "bash"; # or any other shell you want
   };
@@ -26,7 +24,7 @@ in
   ];
 
   environment.systemPackages = [
-    uv
+    pkgs.uv
     myFhs
   ];
 }
