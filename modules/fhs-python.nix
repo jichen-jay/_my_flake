@@ -2,9 +2,6 @@
 { pkgs, ... }:
 
 {
-  # Enable FHS User Env
-  programs.nix-ld.enable = true;
-
   # Libraries needed for FHS Python and its packages
   programs.nix-ld.libraries = with pkgs; [
     stdenv.cc.cc.lib
