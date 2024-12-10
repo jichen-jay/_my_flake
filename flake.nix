@@ -6,9 +6,11 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     nixos-vscode-server.url = "github:nix-community/nixos-vscode-server";
+
+    nix-ld.url = "github:Mic92/nix-ld";
   };
 
-  outputs = { self, nixpkgs, nixos-vscode-server, ... }:
+  outputs = { self, nixpkgs, nixos-vscode-server, nix-ld, ... }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
@@ -19,6 +21,7 @@
 
         modules = [
           ./modules/system.nix
+          ./modules/fhs-python.nix
           ./modules/dark-theme.nix
           ./modules/desktop-entry.nix
           ./modules/access-shared-drive.nix
@@ -26,6 +29,7 @@
           ./modules/services.nix
           ./modules/users.nix
           nixos-vscode-server.nixosModules.default
+          nix-ld.nixosModules.nix-ld
         ];
       };
     };
