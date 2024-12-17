@@ -53,6 +53,7 @@
       "editor.lineHeight" = 1.2;
       "editor.smoothScrolling" = true;
       "editor.formatOnSave" = true;
+      "files.hotExit" = "off";
       "window.autoDetectColorScheme" = true;
       "window.systemColorTheme" = "auto";
       "workbench.editor.limit.enabled" = true;

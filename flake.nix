@@ -35,6 +35,7 @@
         ./modules/desktop-entry.nix
         ./modules/access-shared-drive.nix
         ./modules/vscode.nix
+        ./modules/wasmcloud.nix
       ];
 
       mkHost =
