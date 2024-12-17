@@ -5,10 +5,24 @@
 }:
 {
   environment.systemPackages = with pkgs; [
+    nats-server
     natscli
     inetutils
     postman
+    steam-run
   ];
+
+  systemd.services.nats = {
+    description = "NATS Server";
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+
+    serviceConfig = {
+      ExecStart = "${pkgs.nats-server}/bin/nats-server";
+      Restart = "always";
+      Type = "simple";
+    };
+  };
 
   environment.etc."nats/nats-server.conf".text = ''
     # Client connections

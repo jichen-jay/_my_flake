@@ -2,12 +2,22 @@
 
 {
   environment.systemPackages = with pkgs; [
-    (pkgs.callPackage (fetchFromGitHub {
-      owner = "wasmCloud";
-      repo = "wasmCloud";
-      rev = "v0.37.0";
-      sha256 = "0xhyqw9lxcg8azvc92bk0zrzv9wi4zcrlbkmkxs5la63086w0xdi";
+    (pkgs.stdenv.mkDerivation {
+      pname = "wash-cli";
+      version = "0.37.0";
+      src = pkgs.fetchurl {
+        url = "https://github.com/wasmCloud/wasmCloud/releases/download/wash-cli-v0.37.0/wash-x86_64-unknown-linux-musl";
+        sha256 = "0xhyqw9lxcg8azvc92bk0zrzv9wi4zcrlbkmkxs5la63086w0xdi";
 
-    }) { }).wash-cli
+      };
+
+      dontUnpack = true;
+
+      installPhase = ''
+        mkdir -p $out/bin
+        cp $src $out/bin/wash
+        chmod +x $out/bin/wash
+      '';
+    })
   ];
 }
