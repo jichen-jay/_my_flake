@@ -55,6 +55,7 @@
             ++ [
               {
                 networking.hostName = hostName;
+                time.timeZone = "America/Toronto";
               }
             ];
         };
