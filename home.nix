@@ -50,6 +50,7 @@ in
     with pkgs;
     [
       nil
+      git
       nixpkgs-fmt
       libsecret
       gnome-keyring

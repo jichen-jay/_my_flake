@@ -8,6 +8,7 @@
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     nixos-vscode-server.url = "github:nix-community/nixos-vscode-server";
   };
 
@@ -90,6 +91,10 @@
               zramSwap.enable = true;
               networking.domain = "localdomain";
               # system.stateVersion = "23.11";
+              home-manager.users.root = {
+                home.packages = with nixpkgs; [ git ];
+                programs.git.enable = true;
+              };
             }
             # ./modules/cloud-specific.nix
           ];
