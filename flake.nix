@@ -90,8 +90,9 @@
               boot.tmp.cleanOnBoot = true;
               zramSwap.enable = true;
               networking.domain = "localdomain";
-              system.stateVersion = "24.11";
+              # system.stateVersion = "24.11";
               home-manager.users.root = {
+                home.stateVersion = "24.11";
                 home.packages = with nixpkgs; [ git ];
                 programs.git.enable = true;
               };
