@@ -91,11 +91,13 @@
               zramSwap.enable = true;
               networking.domain = "localdomain";
               # system.stateVersion = "24.11";
-              home-manager.users.root = {
-                home.stateVersion = "24.11";
-                home.packages = with nixpkgs; [ git ];
-                programs.git.enable = true;
-              };
+              home-manager.users.root =
+                { pkgs, ... }:
+                {
+                  home.stateVersion = "24.11";
+                  home.packages = with pkgs; [ git ];
+                  programs.git.enable = true;
+                };
             }
             # ./modules/cloud-specific.nix
           ];
