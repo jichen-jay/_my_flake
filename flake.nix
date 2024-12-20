@@ -81,10 +81,16 @@
 
         cloud = mkHost {
           system = "x86_64-linux";
-          hostName = "cloud";
+          hostName = "VM-0-11-debian";
           isDesktop = false;
           extraModules = [
-            # ./modules/hardware-configuration-cloud.nix
+            ./modules/hardware-configuration-sg.nix
+            {
+              boot.tmp.cleanOnBoot = true;
+              zramSwap.enable = true;
+              networking.domain = "localdomain";
+              # system.stateVersion = "23.11";
+            }
             # ./modules/cloud-specific.nix
           ];
         };
