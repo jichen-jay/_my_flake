@@ -19,5 +19,22 @@
         chmod +x $out/bin/wash
       '';
     })
+    (pkgs.stdenv.mkDerivation {
+      pname = "wrpc-wasmtime";
+      version = "0.14.0";
+      src = pkgs.fetchurl {
+        url = "https://github.com/bytecodealliance/wrpc/releases/download/v0.14.0/wrpc-wasmtime-x86_64-unknown-linux-musl";
+        sha256 = "1j1zfy8lc3219fc310jjjn1a4g16xflvnk0g5zhpqq90vhwamrgd";
+      };
+
+      dontUnpack = true;
+
+      installPhase = ''
+        mkdir -p $out/bin
+        cp $src $out/bin/wrpc-wasmtime
+        chmod +x $out/bin/wrpc-wasmtime
+      '';
+    })
+
   ];
 }

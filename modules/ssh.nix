@@ -58,6 +58,15 @@
             AddKeysToAgent yes
             Compression yes
             ServerAliveInterval 60
+
+          Host sv
+            User root
+            HostName 43.130.1.178
+            IdentityFile ~/.ssh/pn53_id_rsa
+            ForwardAgent yes
+            AddKeysToAgent yes
+            Compression yes
+            ServerAliveInterval 60
         '';
       };
     };

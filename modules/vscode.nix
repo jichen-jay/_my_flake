@@ -30,6 +30,7 @@
       ];
 
     userSettings = {
+      "password-store" = "basic";
       "workbench.startupEditor" = "none";
       "welcome.enabled" = false;
       "editor.fontFamily" = "'JetBrains Mono'";
