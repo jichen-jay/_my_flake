@@ -86,10 +86,12 @@
                 nixpkgs.config.allowUnfree = true;
 
                 # Add this home-manager configuration
-                home-manager.users.jaykchen = {
-                  nixpkgs.config.allowUnfree = true;
-                  home.stateVersion = "24.11";
-                };
+                home-manager.users.jaykchen =
+                  { pkgs, ... }:
+                  {
+                    nixpkgs.config.allowUnfree = true;
+                    home.stateVersion = "24.11";
+                  };
               }
             ];
         };
