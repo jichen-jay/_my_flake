@@ -46,6 +46,7 @@
         ./modules/users.nix
         ./modules/base.nix
         ./modules/ssh.nix
+        ./modules/podman.nix
         # ./modules/virt.nix
         ./modules/services.nix
         inputs.home-manager.nixosModules.home-manager
