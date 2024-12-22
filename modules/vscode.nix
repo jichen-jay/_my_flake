@@ -6,13 +6,12 @@
 {
   environment.systemPackages = with pkgs; [
     nil
-    vscode.fhs
     nixfmt-rfc-style
   ];
 
   home-manager.users.jaykchen.programs.vscode = {
     enable = true;
-    package = pkgs.vscode.fhs;
+    package = pkgs.vscode;
     mutableExtensionsDir = true;
     extensions =
       with pkgs.vscode-extensions;

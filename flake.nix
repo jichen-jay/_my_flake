@@ -13,9 +13,34 @@
   };
 
   outputs =
-    inputs@{ nixpkgs, ... }:
+    inputs@{ nixpkgs, nixpkgs-unstable, ... }:
 
     let
+
+      overlay = final: prev: {
+        vscode = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.vscode-fhs;
+        vscode-with-extensions = (
+          inputs.nixpkgs-unstable.legacyPackages.${prev.system}.vscode-with-extensions.override {
+            vscodeExtensions =
+              with inputs.nixpkgs-unstable.legacyPackages.${prev.system}.vscode-extensions;
+              [
+                esbenp.prettier-vscode
+                brettm12345.nixfmt-vscode
+              ]
+              ++
+                inputs.nixpkgs-unstable.legacyPackages.${prev.system}.vscode-utils.extensionsFromVscodeMarketplace
+                  [
+                    {
+                      name = "solarized-chandrian";
+                      publisher = "JackKenney";
+                      version = "2.2.1";
+                      sha256 = "1zk21rja7wa6zi67vz05xs7w0b9gkl8ysaw8hbm6rj8j1rbp4bq7";
+                    }
+                  ];
+          }
+        );
+      };
+
       # Base modules for all systems
       baseModules = [
         ./modules/users.nix
@@ -57,6 +82,7 @@
               {
                 networking.hostName = hostName;
                 time.timeZone = "America/Toronto";
+                nixpkgs.overlays = [ overlay ];
               }
             ];
         };
