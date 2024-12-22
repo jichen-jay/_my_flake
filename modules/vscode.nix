@@ -4,6 +4,8 @@
   ...
 }:
 {
+  nixpkgs.config.allowUnfree = true; # Add this line
+
   environment.systemPackages = with pkgs; [
     nil
     nixfmt-rfc-style
@@ -11,7 +13,6 @@
   home-manager.users.jaykchen =
     { pkgs, ... }:
     {
-      nixpkgs.config.allowUnfree = true; # Add this line
       programs.vscode = {
         enable = true;
         package = pkgs.vscode;

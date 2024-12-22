@@ -57,18 +57,24 @@ in
         where = containerDir;
         type = "tmpfs";
         wantedBy = [ "multi-user.target" ];
+        requires = [ "systemd-tmpfiles-setup.service" ];
+        after = [ "systemd-tmpfiles-setup.service" ];
         options = "rw,size=1G,mode=700,uid=${uid},gid=${gid}";
       }
     ];
-
     tmpfiles.rules = [
-      "d ${containerDir} 0700 ${user} users -"
+      "d /run/${user}/1000 0700 ${user} users -"
+      "d ${containerDir} 0700 ${user} users -" # Remove the extra /containers
     ];
+
   };
 
   system.activationScripts = {
     podman-dirs = {
-      deps = [ ];
+      deps = [
+        "users"
+        "groups"
+      ];
       text = ''
         # System directories
         mkdir -p /var/lib/containers
