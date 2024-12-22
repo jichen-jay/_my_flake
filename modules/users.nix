@@ -1,49 +1,78 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # NixOS user configuration
   users.users.jaykchen = {
     isNormalUser = true;
     description = "jaykchen";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "podman" # Keep this for podman access
+      "docker" # For docker compatibility
+      "storage"
+    ];
+    createHome = true;
+    home = "/home/jaykchen";
+    group = "users";
+    # Keep these for container user namespacing
+    subUidRanges = [
+      {
+        startUid = 100000;
+        count = 65536;
+      }
+    ];
+    subGidRanges = [
+      {
+        startGid = 100000;
+        count = 65536;
+      }
+    ];
   };
 
   # Home Manager configuration
-  home-manager.users.jaykchen = { pkgs, ... }: {
-    home = {
-      packages = with pkgs; [
-        # ... other packages ...
-      ];
-      stateVersion = "24.11"; # Add this required field
-    };
-
-    programs = {
-      zsh = {
-        enable = true;
-        oh-my-zsh = {
-          enable = true;
-          plugins = [ "git" ];
-        };
-        plugins = [
-          {
-            name = "zsh-autosuggestions";
-            src = pkgs.zsh-autosuggestions;
-          }
+  home-manager.users.jaykchen =
+    { pkgs, ... }:
+    {
+      home = {
+        packages = with pkgs; [
+          # Add your regular user packages here
         ];
-        initExtra = ''
-          # Your custom Zsh config here
+        stateVersion = "24.11";
+      };
+
+      programs = {
+        zsh = {
+          enable = true;
+          oh-my-zsh = {
+            enable = true;
+            plugins = [ "git" ];
+          };
+          plugins = [
+            {
+              name = "zsh-autosuggestions";
+              src = pkgs.zsh-autosuggestions;
+            }
+          ];
+          initExtra = ''
+            # Your custom Zsh config here
+          '';
+        };
+      };
+
+      home.file = {
+        ".bashrc".text = ''
+          # Your bashrc contents if you need them
         '';
       };
     };
 
-    home.file = {
-      ".bashrc".text = ''
-        # Your bashrc contents if you need them (even if Zsh is primary)
-      '';
-    };
-  };
-
-  # Display manager configuration should be in the NixOS configuration
+  # Display manager configuration
   services.displayManager.autoLogin = {
     enable = true;
     user = "jaykchen";
