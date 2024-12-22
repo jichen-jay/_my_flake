@@ -7,8 +7,6 @@
 
 let
   devPackages = with pkgs; [
-    git
-    programs.git
     cmake
     ninja
     gnumake
@@ -23,7 +21,7 @@ let
     fzf
     tmux
     bat
-    exa
+    eza
     jq
     wget
     tree
