@@ -83,6 +83,13 @@
                 networking.hostName = hostName;
                 time.timeZone = "America/Toronto";
                 nixpkgs.overlays = [ overlay ];
+                nixpkgs.config.allowUnfree = true;
+
+                # Add this home-manager configuration
+                home-manager.users.jaykchen = {
+                  nixpkgs.config.allowUnfree = true;
+                  home.stateVersion = "24.11";
+                };
               }
             ];
         };
