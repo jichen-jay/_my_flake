@@ -13,41 +13,15 @@
   };
 
   outputs =
-    inputs@{ nixpkgs, nixpkgs-unstable, ... }:
+    inputs@{ nixpkgs, ... }:
 
     let
-
-      overlay = final: prev: {
-        vscode = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.vscode-fhs;
-        vscode-with-extensions = (
-          inputs.nixpkgs-unstable.legacyPackages.${prev.system}.vscode-with-extensions.override {
-            vscodeExtensions =
-              with inputs.nixpkgs-unstable.legacyPackages.${prev.system}.vscode-extensions;
-              [
-                esbenp.prettier-vscode
-                brettm12345.nixfmt-vscode
-              ]
-              ++
-                inputs.nixpkgs-unstable.legacyPackages.${prev.system}.vscode-utils.extensionsFromVscodeMarketplace
-                  [
-                    {
-                      name = "solarized-chandrian";
-                      publisher = "JackKenney";
-                      version = "2.2.1";
-                      sha256 = "1zk21rja7wa6zi67vz05xs7w0b9gkl8ysaw8hbm6rj8j1rbp4bq7";
-                    }
-                  ];
-          }
-        );
-      };
-
       # Base modules for all systems
       baseModules = [
         ./modules/users.nix
         ./modules/base.nix
         ./modules/ssh.nix
         ./modules/podman.nix
-        # ./modules/virt.nix
         ./modules/services.nix
         inputs.home-manager.nixosModules.home-manager
         inputs.nixos-vscode-server.nixosModules.default
@@ -83,16 +57,6 @@
               {
                 networking.hostName = hostName;
                 time.timeZone = "America/Toronto";
-                nixpkgs.overlays = [ overlay ];
-                nixpkgs.config.allowUnfree = true;
-
-                # Add this home-manager configuration
-                home-manager.users.jaykchen =
-                  { pkgs, ... }:
-                  {
-                    nixpkgs.config.allowUnfree = true;
-                    home.stateVersion = "24.11";
-                  };
               }
             ];
         };
@@ -132,7 +96,13 @@
                 {
                   home.stateVersion = "24.11";
                   home.packages = with pkgs; [ git ];
-                  programs.git.enable = true;
+                  programs.git = {
+                    enable = true;
+                    lfs.enable = true;
+                    userName = "jaykchen@icloud.com";
+                    userEmail = "jaykchen@icloud.com";
+                  };
+
                 };
             }
             # ./modules/cloud-specific.nix

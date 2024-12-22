@@ -8,7 +8,7 @@
 let
   devPackages = with pkgs; [
     git
-    tmux
+    programs.git
     cmake
     ninja
     gnumake
@@ -19,6 +19,12 @@ let
   ];
 
   utilityPackages = with pkgs; [
+    ripgrep
+    fzf
+    tmux
+    bat
+    exa
+    jq
     wget
     tree
     curl
