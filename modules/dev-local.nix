@@ -10,6 +10,13 @@
     postman
   ];
 
+  security.wrappers.tcpdump = {
+    source = "${pkgs.tcpdump}/bin/tcpdump";
+    capabilities = "cap_net_raw,cap_net_admin=eip";
+    owner = "root"; # Add this line
+    group = "root"; # Best practice to also specify group
+  };
+
   environment.etc."nats/nats-server.conf".text = ''
     # Client connections
     port: 4222

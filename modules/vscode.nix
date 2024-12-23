@@ -30,6 +30,7 @@
       ];
 
     userSettings = {
+      "window.restoreWindows" = "none";
       "password-store" = "basic";
       "workbench.startupEditor" = "none";
       "welcome.enabled" = false;
