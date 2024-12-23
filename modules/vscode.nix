@@ -81,6 +81,8 @@
       "remote.SSH.remotePlatform" = {
         "b550" = "linux";
         "md16" = "linux";
+        "nr200" = "linux";
+        "cloud" = "linux";
       };
     };
 

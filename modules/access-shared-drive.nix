@@ -3,7 +3,7 @@
   services.rpcbind.enable = true; # Enable NFS client support
 
   fileSystems."/mnt/nfs-public" = {
-    device = "10.0.0.175:/var/nfs/public";
+    device = "10.0.0.129:/var/nfs/public";
     fsType = "nfs";
     options = [
       "nfsvers=4.2"

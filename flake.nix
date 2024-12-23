@@ -57,6 +57,11 @@
               {
                 networking.hostName = hostName;
                 time.timeZone = "America/Toronto";
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  users.jaykchen = import ./home.nix;
+                };
               }
             ];
         };
