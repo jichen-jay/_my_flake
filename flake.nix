@@ -71,6 +71,12 @@
           extraModules = [ ./modules/hardware-configuration-pn53.nix ];
         };
 
+        nr200 = mkHost {
+          system = "x86_64-linux";
+          hostName = "nr200";
+          extraModules = [ ./modules/hardware-configuration-nr200.nix ];
+        };
+
         md16 = mkHost {
           system = "x86_64-linux";
           hostName = "md16";
