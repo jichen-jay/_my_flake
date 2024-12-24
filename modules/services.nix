@@ -47,9 +47,12 @@
   };
 
   # Gnome Keyring
-  security.pam.services.gdm.enableGnomeKeyring = true;
   services.dbus.packages = [ pkgs.gnome.seahorse ];
-
+  security.pam.services = {
+    login.enableGnomeKeyring = true;
+    gdm.enableGnomeKeyring = true;
+  };
+  
   services.gnome = {
     gnome-keyring.enable = true;
     core-utilities.enable = true;

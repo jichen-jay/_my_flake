@@ -56,6 +56,9 @@
       "editor.smoothScrolling" = true;
       "editor.formatOnSave" = true;
       "files.hotExit" = "off";
+      "files.autoSave" = "afterDelay";
+      "files.autoSaveDelay" = 5000;
+      "files.simpleDialog.enable" = true;
       "window.autoDetectColorScheme" = true;
       "window.systemColorTheme" = "auto";
       "workbench.editor.limit.enabled" = true;

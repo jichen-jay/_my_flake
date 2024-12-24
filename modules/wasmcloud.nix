@@ -5,6 +5,7 @@
     netcat
     socat
     tcpdump
+    wasmtime
     # wireshark
 
     (pkgs.stdenv.mkDerivation {

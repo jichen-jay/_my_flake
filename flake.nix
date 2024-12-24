@@ -63,6 +63,14 @@
                   users.jaykchen = import ./home.nix;
                 };
               }
+              {
+                systemd.tmpfiles.rules = [
+                  "d /home/jaykchen/.local 0700 jaykchen users"
+                  "d /home/jaykchen/.local/share 0700 jaykchen users"
+                  "d /home/jaykchen/.local/share/direnv 0700 jaykchen users"
+                ];
+              }
+
             ];
         };
     in
