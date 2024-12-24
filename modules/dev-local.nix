@@ -17,19 +17,19 @@
     group = "root"; # Best practice to also specify group
   };
 
-  environment.etc."nats/nats-server.conf".text = ''
-    # Client connections
-    port: 4222
+  # environment.etc."nats/nats-server.conf".text = ''
+  #   # Client connections
+  #   port: 4222
 
-    # HTTP monitoring port
-    http_port: 8222
+  #   # HTTP monitoring port
+  #   http_port: 8222
 
-    # Debugging options
-    debug: true
-    trace: true
+  #   # Debugging options
+  #   debug: true
+  #   trace: true
 
-    # Log file
-    log_file: "/var/log/nats-server.log"
-  '';
+  #   # Log file
+  #   log_file: "/var/log/nats-server.log"
+  # '';
 
 }

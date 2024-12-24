@@ -71,7 +71,19 @@
                   "d /home/jaykchen/.local/share/direnv 0700 jaykchen users"
                 ];
               }
-
+              # {
+              #   systemd.services.nats-server = {
+              #     serviceConfig = {
+              #       StateDirectory = "nats";
+              #       LogsDirectory = "nats";
+              #       RuntimeDirectory = "nats";
+              #       ReadWritePaths = [
+              #         "/var/lib/nats"
+              #         "/var/log/nats-server.log"
+              #       ];
+              #     };
+              #   };
+              # }
             ];
         };
     in
