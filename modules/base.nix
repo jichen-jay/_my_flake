@@ -1,10 +1,10 @@
 # ./modules/base.nix
-{ inputs, ... }:
+{ inputs, pkgs, ... }:
 {
   nixpkgs.config.allowUnfree = true;
 
   nix = {
-    package = inputs.nixpkgs.nixVersions.stable;
+    package =pkgs.nix;
     settings = {
       experimental-features = [
         "nix-command"
