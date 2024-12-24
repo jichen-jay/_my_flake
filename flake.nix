@@ -73,7 +73,26 @@
         pn53 = mkHost {
           system = "x86_64-linux";
           hostName = "pn53";
-          extraModules = [ ./modules/hardware-configuration-pn53.nix ];
+          isDesktop = false;
+          extraModules = [
+            ./modules/hardware-configuration-pn53.nix
+            {
+              boot.tmp.cleanOnBoot = true;
+              home-manager.users.root =
+                { pkgs, ... }:
+                {
+                  home.stateVersion = "24.11";
+                  home.packages = with pkgs; [ git ];
+                  programs.git = {
+                    enable = true;
+                    lfs.enable = true;
+                    userName = "jaykchen@icloud.com";
+                    userEmail = "jaykchen@icloud.com";
+                  };
+
+                };
+            }
+          ];
         };
 
         nr200 = mkHost {
