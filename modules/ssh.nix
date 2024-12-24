@@ -36,7 +36,7 @@
             User git
             IdentityFile ~/.ssh/alt_git
 
-          Host b550 md16
+          Host b550 md16 pn53
             User jaykchen
             IdentityFile ~/.ssh/pn53_id_rsa
             ForwardAgent yes
@@ -49,6 +49,9 @@
 
           Host md16
             HostName 10.0.0.40
+
+          Host pn53
+            HostName 10.0.0.93
 
           Host sg
             User root
