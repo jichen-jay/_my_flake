@@ -2,17 +2,21 @@
 { inputs, ... }:
 {
   nixpkgs.config.allowUnfree = true;
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-    max-jobs = "auto";
-    trusted-users = [
-      "root"
-      "@wheel"
-      "jaykchen"
-    ];
+
+  nix = {
+    package = inputs.nixpkgs.nixVersions.stable;
+    settings = {
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+      max-jobs = "auto";
+      trusted-users = [
+        "root"
+        "@wheel"
+        "jaykchen"
+      ];
+    };
   };
 
   home-manager = {
@@ -24,4 +28,6 @@
       imports = [ ../home.nix ];
     };
   };
+
+  system.stateVersion = "24.11";
 }

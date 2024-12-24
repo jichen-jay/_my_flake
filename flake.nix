@@ -29,6 +29,7 @@
 
       # Desktop-specific modules
       desktopModules = [
+        ./modules/xfce.nix
         ./modules/printer.nix
         ./modules/font.nix
         ./modules/dev-local.nix

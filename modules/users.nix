@@ -20,6 +20,7 @@
     createHome = true;
     home = "/home/jaykchen";
     group = "users";
+    shell = pkgs.bash;
     # Keep these for container user namespacing
     subUidRanges = [
       {

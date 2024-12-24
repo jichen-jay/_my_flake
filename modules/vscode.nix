@@ -10,6 +10,11 @@
     nixfmt-rfc-style
   ];
 
+  services.vscode-server = {
+    enable = true;
+    enableFHS = true;
+  };
+  
   home-manager.users.jaykchen.programs.vscode = {
     enable = true;
     package = pkgs.vscode.fhs;
