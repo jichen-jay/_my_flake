@@ -95,6 +95,12 @@ in
 
   };
 
+  systemd.tmpfiles.rules = [
+    "d /home/jaykchen/.local 0700 jaykchen users"
+    "d /home/jaykchen/.local/share 0700 jaykchen users"
+    "d /home/jaykchen/.local/share/direnv 0700 jaykchen users"
+  ];
+
   services.gpg-agent = {
     enable = true;
     defaultCacheTtl = 1800;
