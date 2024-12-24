@@ -47,7 +47,15 @@
   };
 
   # Gnome Keyring
-  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.gdm.enableGnomeKeyring = true;
+  services.dbus.packages = [ pkgs.gnome.seahorse ];
+
+  services.gnome = {
+    gnome-keyring.enable = true;
+    core-utilities.enable = true;
+    evolution-data-server.enable = true;
+    glib-networking.enable = true;
+  };
 
   services.vscode-server = {
     enable = true;
