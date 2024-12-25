@@ -8,6 +8,8 @@
     nil
     vscode.fhs
     nixfmt-rfc-style
+    piper
+    libratbag
   ];
 
   services.vscode-server = {

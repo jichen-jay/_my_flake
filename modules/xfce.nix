@@ -24,6 +24,9 @@
     xfce4-clipman-plugin
   ];
 
+  services.ratbagd.enable = true;
+  users.users.jaykchen.extraGroups = [ "input" ];
+  
   # Printing
   services.printing.enable = true;
 
