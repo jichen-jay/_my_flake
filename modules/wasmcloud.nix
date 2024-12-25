@@ -23,6 +23,48 @@
       '';
     })
     (pkgs.stdenv.mkDerivation {
+      pname = "wac";
+      version = "0.6.1";
+      src = pkgs.fetchurl {
+        url = "https://github.com/bytecodealliance/wac/releases/download/v0.6.1/wac-cli-x86_64-unknown-linux-musl";
+        sha256 = "0cafjsa2lcaczavbpzicyksmsn5vqzlycgwfmc6dz4mqpg4adgx2";
+      };
+      dontUnpack = true;
+      installPhase = ''
+        mkdir -p $out/bin
+        cp $src $out/bin/wac
+        chmod +x $out/bin/wac
+      '';
+    })
+    # (pkgs.rustPlatform.buildRustPackage rec {
+    #   pname = "wasi-virt";
+    #   version = "unstable";
+
+    #   src = pkgs.fetchFromGitHub {
+    #     owner = "bytecodealliance";
+    #     repo = "wasi-virt";
+    #     rev = "main";
+    #     sha256 = ""; # Will show correct hash on first build attempt
+    #   };
+
+    #   cargoLock = {
+    #     lockFile = "${src}/Cargo.lock";
+    #     outputHashes = {
+    #       # Will be provided after first build attempt
+    #     };
+    #   };
+
+    #   nativeBuildInputs = with pkgs; [
+    #     pkg-config
+    #     rustc
+    #     cargo
+    #   ];
+
+    #   buildInputs = with pkgs; [
+    #     openssl
+    #   ];
+    # })
+    (pkgs.stdenv.mkDerivation {
       pname = "wrpc-wasmtime";
       version = "0.14.0";
       src = pkgs.fetchurl {

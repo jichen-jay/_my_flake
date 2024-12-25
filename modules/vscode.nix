@@ -16,11 +16,14 @@
     enable = true;
     enableFHS = true;
   };
-  
+
   home-manager.users.jaykchen.programs.vscode = {
     enable = true;
     package = pkgs.vscode.fhs;
     mutableExtensionsDir = true;
+    enableUpdateCheck = false;
+    enableExtensionUpdateCheck = false;
+
     extensions =
       with pkgs.vscode-extensions;
       [
@@ -38,6 +41,7 @@
 
     userSettings = {
       "window.restoreWindows" = "none";
+      "window.reopenFolders" = "none";
       "password-store" = "basic";
       "workbench.startupEditor" = "none";
       "welcome.enabled" = false;
@@ -51,6 +55,9 @@
             "command" = [ "nixfmt" ];
           };
         };
+      };
+      "[nix]" = {
+        "editor.defaultFormatter" = null;
       };
       "editor.codeLens" = false;
       "editor.minimap.enabled" = false;
@@ -72,6 +79,7 @@
       "workbench.editor.limit.excludeDirty" = true;
       "workbench.editor.limit.value" = 5;
       "workbench.editor.enablePreview" = false;
+      "workbench.editor.restoreViewState" = false;
       "workbench.preferredLightColorTheme" = "Solarized Light Chandrian";
       "workbench.preferredDarkColorTheme" = "Solarized Dark Chandrian";
       "workbench.colorTheme" = "Solarized Dark Chandrian";
@@ -101,6 +109,16 @@
         key = "ctrl+w";
         command = "editor.action.smartSelect.expand";
         when = "editorTextFocus && editorHasSelection";
+      }
+      {
+        key = "ctrl+w";
+        command = "workbench.action.closeActiveEditor";
+        when = "editorIsOpen && !editorHasSelection";
+      }
+      {
+        key = "ctrl+w";
+        command = "-workbench.action.closeWindow";
+        when = "!editorIsOpen";
       }
       {
         key = "ctrl+d";
