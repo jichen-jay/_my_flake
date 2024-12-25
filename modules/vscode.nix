@@ -28,7 +28,7 @@
       with pkgs.vscode-extensions;
       [
         esbenp.prettier-vscode
-        brettm12345.nixfmt-vscode
+        # brettm12345.nixfmt-vscode
       ]
       ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
         {
