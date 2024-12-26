@@ -59,27 +59,87 @@
                 networking.hostName = hostName;
                 time.timeZone = "America/Toronto";
                 home-manager = {
-                  backupFileExtension = "backup";
+                  backupFileExtension = "bkp";
                   useGlobalPkgs = true;
                   useUserPackages = true;
                   users.jaykchen =
-                    { pkgs, ... }:
+                    { pkgs, config, ... }:
                     {
                       imports = [ ./home.nix ];
                       programs.zsh = {
                         enable = true;
                         oh-my-zsh = {
                           enable = true;
-                          plugins = [ "git" ];
+                          theme = "powerlevel10k/powerlevel10k";
+                          plugins = [
+                            "git"
+                            "direnv"
+                          ];
                         };
+                        initExtra = ''
+                          # Enable Powerlevel10k instant prompt for faster startup
+                          if [[ -r "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh" ]]; then
+                            source "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh"
+                          fi
+
+                          source ${pkgs.fzf}/share/fzf/key-bindings.zsh
+                          source ${pkgs.fzf}/share/fzf/completion.zsh
+                          [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+                          # Core Settings
+                          typeset -g POWERLEVEL9K_MODE=nerdfont-complete
+                          typeset -g POWERLEVEL9K_PROMPT_ADD_NEWLINE=false
+                          typeset -g POWERLEVEL9K_PROMPT_ON_NEWLINE=false
+                          POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+
+                          # Directory Display
+                          typeset -g POWERLEVEL9K_DIR_BACKGROUND=4
+                          typeset -g POWERLEVEL9K_DIR_FOREGROUND=0
+                          typeset -g POWERLEVEL9K_SHORTEN_STRATEGY=truncate_to_last
+                          typeset -g POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
+
+                          # Simplified VCS
+                          typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=2
+                          typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=3
+
+                          # Time Format
+                          typeset -g POWERLEVEL9K_TIME_FORMAT="%D{%H:%M}"
+
+                          # Minimal Left Prompt Elements
+                          typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
+                            dir
+                            vcs
+                          )
+
+                          # Minimal Right Prompt Elements
+                          typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
+                            time
+                          )
+                        '';
                         plugins = [
                           {
                             name = "zsh-autosuggestions";
                             src = pkgs.zsh-autosuggestions;
                           }
+                          {
+                            name = "zsh-syntax-highlighting";
+                            src = pkgs.zsh-syntax-highlighting;
+                          }
+                          {
+                            name = "powerlevel10k";
+                            src = "${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k";
+                            file = "powerlevel10k.zsh-theme";
+                          }
+                          {
+                            name = "zsh-fzf-history-search";
+                            src = pkgs.zsh-fzf-history-search;
+                          }
                         ];
-                        initExtra = "";
                       };
+
+                      home.packages = with pkgs; [
+                        fzf
+                      ];
                     };
                 };
               }
