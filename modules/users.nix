@@ -20,7 +20,7 @@
     createHome = true;
     home = "/home/jaykchen";
     group = "users";
-    shell = pkgs.bash;
+    shell = pkgs.zsh;
     # Keep these for container user namespacing
     subUidRanges = [
       {
@@ -46,7 +46,7 @@
         ];
         stateVersion = "24.11";
       };
-
+      programs.bash.enable = true;
       programs = {
         zsh = {
           enable = true;
