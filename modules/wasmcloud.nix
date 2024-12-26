@@ -5,7 +5,6 @@
     netcat
     socat
     tcpdump
-    wasmtime
     # wireshark
 
     (pkgs.stdenv.mkDerivation {
@@ -23,6 +22,25 @@
       '';
     })
     (pkgs.stdenv.mkDerivation {
+      pname = "wasmtime";
+      version = "28.0.0";
+      src = pkgs.fetchurl {
+        url = "https://github.com/bytecodealliance/wasmtime/releases/download/v28.0.0/wasmtime-v28.0.0-x86_64-musl.tar.xz";
+        sha256 = "0gbkzhg0p9qn1vczap6pfs2xmp9vpj5mxhm1jbx33fc4syazrrxn";
+      };
+
+      unpackPhase = ''
+        mkdir -p source
+        tar xf $src -C source
+      '';
+
+      installPhase = ''
+        mkdir -p $out/bin
+        cp source/wasmtime-v${version}-x86_64-musl/wasmtime $out/bin/
+        chmod +x $out/bin/wasmtime
+      '';
+    })
+    (pkgs.stdenv.mkDerivation {
       pname = "wac";
       version = "0.6.1";
       src = pkgs.fetchurl {
@@ -36,34 +54,6 @@
         chmod +x $out/bin/wac
       '';
     })
-    # (pkgs.rustPlatform.buildRustPackage rec {
-    #   pname = "wasi-virt";
-    #   version = "unstable";
-
-    #   src = pkgs.fetchFromGitHub {
-    #     owner = "bytecodealliance";
-    #     repo = "wasi-virt";
-    #     rev = "main";
-    #     sha256 = ""; # Will show correct hash on first build attempt
-    #   };
-
-    #   cargoLock = {
-    #     lockFile = "${src}/Cargo.lock";
-    #     outputHashes = {
-    #       # Will be provided after first build attempt
-    #     };
-    #   };
-
-    #   nativeBuildInputs = with pkgs; [
-    #     pkg-config
-    #     rustc
-    #     cargo
-    #   ];
-
-    #   buildInputs = with pkgs; [
-    #     openssl
-    #   ];
-    # })
     (pkgs.stdenv.mkDerivation {
       pname = "wrpc-wasmtime";
       version = "0.14.0";
@@ -79,7 +69,6 @@
       '';
     })
 
-    # Web development tools
     websocat
     mtr
     nmap
