@@ -65,12 +65,8 @@
           '';
         };
       };
+      home.file.".bashrc".force = true;
 
-      home.file = {
-        ".bashrc".text = ''
-          # Your bashrc contents if you need them
-        '';
-      };
     };
 
   # Display manager configuration

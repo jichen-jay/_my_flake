@@ -26,7 +26,7 @@
 
   services.ratbagd.enable = true;
   users.users.jaykchen.extraGroups = [ "input" ];
-  
+
   # Printing
   services.printing.enable = true;
 
@@ -40,7 +40,7 @@
   };
 
   # Gnome Keyring
-  services.dbus.packages = [ pkgs.gnome.seahorse ];
+  services.dbus.packages = [ pkgs.seahorse ];
   security.pam.services = {
     login.enableGnomeKeyring = true;
     gdm.enableGnomeKeyring = true;

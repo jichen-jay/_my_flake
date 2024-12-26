@@ -21,24 +21,46 @@
         chmod +x $out/bin/wash
       '';
     })
-    (pkgs.stdenv.mkDerivation {
+    (rustPlatform.buildRustPackage rec {
       pname = "wasmtime";
-      version = "28.0.0";
-      src = pkgs.fetchurl {
-        url = "https://github.com/bytecodealliance/wasmtime/releases/download/v28.0.0/wasmtime-v28.0.0-x86_64-musl.tar.xz";
-        sha256 = "0gbkzhg0p9qn1vczap6pfs2xmp9vpj5mxhm1jbx33fc4syazrrxn";
+      version = "27.0.0";
+
+      src = fetchFromGitHub {
+        owner = "bytecodealliance";
+        repo = pname;
+        rev = "v${version}";
+        sha256 = "sha256-Xqj680MZ8LpBChEU0ia+GGjSceRM55tF5uWJLMuBuQ0=";
+        fetchSubmodules = true;
       };
 
-      unpackPhase = ''
-        mkdir -p source
-        tar xf $src -C source
-      '';
+      # Disable cargo-auditable until https://github.com/rust-secure-code/cargo-auditable/issues/124 is solved.
+      auditable = false;
+      cargoHash = "sha256-qpPXP815kpIIFOiQQDUUgI5blRV1ly2it/XC09UnmVU=";
 
-      installPhase = ''
-        mkdir -p $out/bin
-        cp source/wasmtime-v${version}-x86_64-musl/wasmtime $out/bin/
-        chmod +x $out/bin/wasmtime
-      '';
+      cargoBuildFlags = [
+        "--package"
+        "wasmtime-cli"
+      ];
+
+      nativeBuildInputs = [
+        cmake
+        rustfmt
+      ];
+
+      doCheck = false; # Keep this false unless you want to run tests
+
+      meta = with lib; {
+        description = "Standalone JIT-style runtime for WebAssembly, using Cranelift";
+        homepage = "https://wasmtime.dev/";
+        license = licenses.asl20;
+        mainProgram = "wasmtime";
+        maintainers = with maintainers; [
+          ereslibre
+          matthewbauer
+        ];
+        platforms = platforms.unix;
+        changelog = "https://github.com/bytecodealliance/wasmtime/blob/v${version}/RELEASES.md";
+      };
     })
     (pkgs.stdenv.mkDerivation {
       pname = "wac";
