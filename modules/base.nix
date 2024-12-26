@@ -4,7 +4,7 @@
   nixpkgs.config.allowUnfree = true;
 
   nix = {
-    package =pkgs.nix;
+    package = pkgs.nix;
     settings = {
       experimental-features = [
         "nix-command"
@@ -26,6 +26,7 @@
     users.jaykchen = {
       home.stateVersion = "24.11";
       imports = [ ../home.nix ];
+      home.file.".bashrc".force = true;
     };
   };
 

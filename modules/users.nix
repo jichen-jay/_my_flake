@@ -65,7 +65,6 @@
           '';
         };
       };
-      home.file.".bashrc".force = true;
 
     };
 

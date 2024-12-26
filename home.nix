@@ -56,7 +56,6 @@ in
     [
       nil
       git
-      tcpdump
       nixpkgs-fmt
       libsecret
       gnome-keyring
