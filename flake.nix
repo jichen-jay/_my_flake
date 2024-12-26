@@ -59,9 +59,28 @@
                 networking.hostName = hostName;
                 time.timeZone = "America/Toronto";
                 home-manager = {
+                  backupFileExtension = "backup";
                   useGlobalPkgs = true;
                   useUserPackages = true;
-                  users.jaykchen = import ./home.nix;
+                  users.jaykchen =
+                    { pkgs, ... }:
+                    {
+                      imports = [ ./home.nix ];
+                      programs.zsh = {
+                        enable = true;
+                        oh-my-zsh = {
+                          enable = true;
+                          plugins = [ "git" ];
+                        };
+                        plugins = [
+                          {
+                            name = "zsh-autosuggestions";
+                            src = pkgs.zsh-autosuggestions;
+                          }
+                        ];
+                        initExtra = "";
+                      };
+                    };
                 };
               }
               {
@@ -71,19 +90,6 @@
                   "d /home/jaykchen/.local/share/direnv 0700 jaykchen users"
                 ];
               }
-              # {
-              #   systemd.services.nats-server = {
-              #     serviceConfig = {
-              #       StateDirectory = "nats";
-              #       LogsDirectory = "nats";
-              #       RuntimeDirectory = "nats";
-              #       ReadWritePaths = [
-              #         "/var/lib/nats"
-              #         "/var/log/nats-server.log"
-              #       ];
-              #     };
-              #   };
-              # }
             ];
         };
     in

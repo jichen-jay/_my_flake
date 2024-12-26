@@ -39,36 +39,4 @@
 
   programs.zsh.enable = true;
 
-  # Home Manager configuration
-  home-manager.users.jaykchen =
-    { pkgs, ... }:
-    {
-      home = {
-        packages = with pkgs; [
-          # Add your regular user packages here
-        ];
-        stateVersion = "24.11";
-      };
-
-      programs = {
-        bash.enable = true;
-        zsh = {
-          enable = true;
-          oh-my-zsh = {
-            enable = true;
-            plugins = [ "git" ];
-          };
-          plugins = [
-            {
-              name = "zsh-autosuggestions";
-              src = pkgs.zsh-autosuggestions;
-            }
-          ];
-          initExtra = ''
-            # Your custom Zsh config here
-          '';
-        };
-      };
-
-    };
 }
