@@ -23,10 +23,24 @@
     backupFileExtension = "backup";
     useGlobalPkgs = true;
     useUserPackages = true;
+
     users.jaykchen = {
+
       home.stateVersion = "24.11";
       imports = [ ../home.nix ];
-      home.file.".bashrc".force = true;
+
+      programs.direnv = {
+        enable = true;
+        nix-direnv.enable = true;
+      };
+
+      programs.bash = {
+        enable = true;
+        initExtra = ''
+          eval "$(direnv hook bash)"
+          source $HOME/.nix-profile/share/nix-direnv/direnvrc
+        '';
+      };
     };
   };
 

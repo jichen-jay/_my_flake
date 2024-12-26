@@ -5,6 +5,7 @@
     netcat
     socat
     tcpdump
+    wasm-tools
     # wireshark
 
     (pkgs.stdenv.mkDerivation {
