@@ -1,6 +1,13 @@
 { config, pkgs, ... }:
 
 {
+
+  # Display manager configuration
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "jaykchen";
+  };
+
   # X11 and Desktop Environment
   services.xserver = {
     enable = true;
@@ -32,8 +39,11 @@
 
   # Audio (Pipewire)
   security.rtkit.enable = true;
+  
   services.pipewire = {
     enable = true;
+    jack.enable = true; # For JACK applications
+    wireplumber.enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
@@ -48,7 +58,7 @@
 
   services.gnome = {
     gnome-keyring.enable = true;
-    core-utilities.enable = true;
+    # core-utilities.enable = true;
     evolution-data-server.enable = true;
     glib-networking.enable = true;
   };

@@ -21,6 +21,7 @@
     home = "/home/jaykchen";
     group = "users";
     shell = pkgs.zsh;
+
     # Keep these for container user namespacing
     subUidRanges = [
       {
@@ -36,6 +37,8 @@
     ];
   };
 
+  programs.zsh.enable = true;
+
   # Home Manager configuration
   home-manager.users.jaykchen =
     { pkgs, ... }:
@@ -46,8 +49,9 @@
         ];
         stateVersion = "24.11";
       };
-      programs.bash.enable = true;
+
       programs = {
+        bash.enable = true;
         zsh = {
           enable = true;
           oh-my-zsh = {
@@ -67,10 +71,4 @@
       };
 
     };
-
-  # Display manager configuration
-  services.displayManager.autoLogin = {
-    enable = true;
-    user = "jaykchen";
-  };
 }
