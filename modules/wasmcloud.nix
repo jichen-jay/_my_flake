@@ -6,6 +6,7 @@
     socat
     tcpdump
     wasm-tools
+    wabt
     # wireshark
 
     (pkgs.stdenv.mkDerivation {
