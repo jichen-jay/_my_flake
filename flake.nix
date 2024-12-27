@@ -70,6 +70,11 @@
                         ./modules/zsh.nix
                       ];
                       
+                      programs.home-manager.enable = true;
+                      home.sessionVariables = {
+                        SHELL = "${pkgs.zsh}/bin/zsh";
+                      };
+
                       home.packages = with pkgs; [
                         fzf
                       ];

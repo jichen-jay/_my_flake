@@ -45,11 +45,10 @@ in
 {
   home = {
     enableNixpkgsReleaseCheck = false;
+    username = "jaykchen";
+    homeDirectory = "/home/jaykchen";
+    stateVersion = "24.11";
   };
-
-  home.username = "jaykchen";
-  home.homeDirectory = "/home/jaykchen";
-  home.stateVersion = "24.11";
 
   home.packages =
     with pkgs;

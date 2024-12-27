@@ -1,4 +1,7 @@
-{ pkgs, config, ... }: {
+{ pkgs, config, ... }:
+{
+  xdg.enable = true;
+
   programs.zsh = {
     enable = true;
     oh-my-zsh = {
@@ -9,6 +12,19 @@
         "direnv"
       ];
     };
+
+    enableCompletion = true;
+    enableAutosuggestions = true;
+    syntaxHighlighting.enable = true;
+
+    # Add history configuration
+    history = {
+      size = 10000;
+      path = "${config.xdg.dataHome}/zsh/history";
+      ignoreDups = true;
+      share = true;
+    };
+
     initExtra = ''
       # Enable Powerlevel10k instant prompt
       if [[ -r "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh" ]]; then
@@ -20,72 +36,75 @@
       [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
       # Core Settings
-      typeset -g POWERLEVEL9K_MODE=nerdfont-complete
+      typeset -g POWERLEVEL9K_MODE="unicode-in-256colors"
       typeset -g POWERLEVEL9K_PROMPT_ADD_NEWLINE=false
       typeset -g POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+      typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
       POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 
-      # Directory Display
-      typeset -g POWERLEVEL9K_SHORTEN_STRATEGY=truncate_to_last
-      typeset -g POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
+      # Frame Settings
+      # typeset -g POWERLEVEL9K_LEFT_PROMPT_FRAME=true
+      typeset -g POWERLEVEL9K_RIGHT_PROMPT_FRAME=true
+      typeset -g POWERLEVEL9K_FRAME_COLOR=238
 
-      # VCS Colors (Git)
-      typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=076
-      typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=214
+      # Path and Prompt Styling
+      typeset -g POWERLEVEL9K_HOST_BACKGROUND="none"
+      typeset -g POWERLEVEL9K_DIR_BACKGROUND="none"
+      typeset -g POWERLEVEL9K_DIR_FOREGROUND=31  # Blue color for path
+      typeset -g POWERLEVEL9K_PROMPT_CHAR_BACKGROUND="none"
+      typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_VIINS_FOREGROUND=76
+      typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_VIINS_FOREGROUND=196
 
-      # Time Display
-      typeset -g POWERLEVEL9K_TIME_FORMAT="%D{%H:%M:%S}"
-      typeset -g POWERLEVEL9K_TIME_FOREGROUND=246
+      # Theme Adaptation
+      typeset -g POWERLEVEL9K_COLOR_SCHEME="light"
+      typeset -g POWERLEVEL9K_COLORS_LEVEL="256"
+      typeset -g POWERLEVEL9K_VISUAL_IDENTIFIER_EXPANSION=' '
 
-      # Battery Settings
-      typeset -g POWERLEVEL9K_BATTERY_LOW_THRESHOLD=20
-      typeset -g POWERLEVEL9K_BATTERY_LOW_FOREGROUND=160
-      typeset -g POWERLEVEL9K_BATTERY_CHARGING_FOREGROUND=70
-      typeset -g POWERLEVEL9K_BATTERY_STAGES='\UF008E\UF007A\UF007B\UF007C\UF007D\UF007E\UF007F\UF0080\UF0081\UF0082\UF0079'
+      # Remove background colors from segments
+      typeset -g POWERLEVEL9K_VCS_BACKGROUND="none"
+      typeset -g POWERLEVEL9K_STATUS_BACKGROUND="none"
+      typeset -g POWERLEVEL9K_VIRTUALENV_BACKGROUND="none"
+      typeset -g POWERLEVEL9K_NODEENV_BACKGROUND="none"
+      typeset -g POWERLEVEL9K_KUBECONTEXT_BACKGROUND="none"
+      typeset -g POWERLEVEL9K_AWS_BACKGROUND="none"
+      typeset -g POWERLEVEL9K_RAM_BACKGROUND="none"
+      typeset -g POWERLEVEL9K_SWAP_BACKGROUND="none"
+      typeset -g POWERLEVEL9K_IP_BACKGROUND="none"
+      typeset -g POWERLEVEL9K_VPN_IP_BACKGROUND="none"
+      typeset -g POWERLEVEL9K_WIFI_BACKGROUND="none"
+      typeset -g POWERLEVEL9K_BATTERY_BACKGROUND="none"
 
-      # Environment Colors
-      typeset -g POWERLEVEL9K_VIRTUALENV_FOREGROUND=37
-      typeset -g POWERLEVEL9K_NODE_VERSION_FOREGROUND=70
-      typeset -g POWERLEVEL9K_RUBY_VERSION_FOREGROUND=168
-      typeset -g POWERLEVEL9K_KUBECONTEXT_FOREGROUND=134
-      typeset -g POWERLEVEL9K_AWS_FOREGROUND=208
+      # Auto Theme Detection
+      typeset -g POWERLEVEL9K_COLOR_SCHEME="auto"
+      typeset -g POWERLEVEL9K_TERM_SHELL_INTEGRATION=true
+      typeset -g POWERLEVEL9K_VISUAL_IDENTIFIER_EXPANSION=' '
 
-      # System Monitoring Colors
-      typeset -g POWERLEVEL9K_RAM_FOREGROUND=66
-      typeset -g POWERLEVEL9K_SWAP_FOREGROUND=96
-      typeset -g POWERLEVEL9K_PUBLIC_IP_FOREGROUND=94
-      typeset -g POWERLEVEL9K_WIFI_FOREGROUND=68
+      # Visual Style
+      typeset -g POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_CHAR="·"
+      typeset -g POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_FOREGROUND=238
+      typeset -g POWERLEVEL9K_MULTILINE_NEWLINE_PROMPT_GAP_CHAR="·"
+      typeset -g POWERLEVEL9K_MULTILINE_LAST_PROMPT_GAP_CHAR="·"
 
-      # Load Indicators
-      typeset -g POWERLEVEL9K_LOAD_NORMAL_FOREGROUND=66
-      typeset -g POWERLEVEL9K_LOAD_WARNING_FOREGROUND=178
-      typeset -g POWERLEVEL9K_LOAD_CRITICAL_FOREGROUND=166
+      # Icon Settings
+      typeset -g POWERLEVEL9K_VCS_BRANCH_ICON=""
+      typeset -g POWERLEVEL9K_VCS_UNTRACKED_ICON="?"
+      typeset -g POWERLEVEL9K_VCS_UNSTAGED_ICON="!"
+      typeset -g POWERLEVEL9K_VCS_STAGED_ICON="+"
 
-      # Disk Usage Settings
-      typeset -g POWERLEVEL9K_DISK_USAGE_WARNING_LEVEL=90
-      typeset -g POWERLEVEL9K_DISK_USAGE_CRITICAL_LEVEL=95
-
-      # Left and Right Prompt Elements
-      typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
-        context
-        dir
-        vcs
-      )
-
+      # Remove Time Display
       typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
         status
         virtualenv
         nodeenv
         kubecontext
-        aws
         ram
         swap
         public_ip
         vpn_ip
         wifi
-        battery
-        time
       )
+
+      eval "$(direnv hook zsh)"
     '';
     plugins = [
       {
@@ -110,5 +129,6 @@
 
   home.packages = with pkgs; [
     fzf
+    zsh-powerlevel10k
   ];
 }
