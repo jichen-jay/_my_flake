@@ -14,12 +14,6 @@
     desktopManager.xfce.enable = true;
   };
 
-  # Enable dconf (needed for gsettings)
-  programs = {
-    xfconf.enable = true;
-    dconf.enable = true; # Add this
-  };
-
   # not needed in pure Nixos
   # environment.sessionVariables = {
   #   XDG_DATA_DIRS = [

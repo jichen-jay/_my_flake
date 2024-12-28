@@ -16,6 +16,7 @@
       "podman" # Keep this for podman access
       "docker" # For docker compatibility
       "storage"
+      "users"
     ];
     createHome = true;
     home = "/home/jaykchen";

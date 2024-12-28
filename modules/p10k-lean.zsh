@@ -13,6 +13,90 @@
 'builtin' 'setopt' 'no_aliases' 'no_sh_glob' 'brace_expand'
 
 () {
+
+  # Theme Detection
+  : ${POWERLEVEL9K_COLOR_SCHEME:=dark}
+
+  # Theme Detection
+  if [[ $(tput colors) == "256" ]]; then
+    if [[ $(tput colors) == "256" ]]; then
+      if [[ "$(tput colors)" == "256" ]]; then
+        typeset -g POWERLEVEL9K_COLOR_SCHEME=${POWERLEVEL9K_COLOR_SCHEME:-dark}
+      fi
+    fi
+  fi
+
+  # Core Theme Settings
+  if [[ $POWERLEVEL9K_COLOR_SCHEME == "dark" ]]; then
+    typeset -g POWERLEVEL9K_DIR_FOREGROUND=39      # Bright blue
+    typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=76      # Green
+    typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=178  # Orange
+    typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_VIINS_FOREGROUND=76
+    typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_VIINS_FOREGROUND=196
+  else
+    typeset -g POWERLEVEL9K_DIR_FOREGROUND=31      # Darker blue
+    typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=70      # Darker green
+    typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=172  # Darker orange
+    typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_VIINS_FOREGROUND=70
+    typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_VIINS_FOREGROUND=160
+  fi
+
+  # Core Theme Settings
+  if [[ $POWERLEVEL9K_COLOR_SCHEME == "dark" ]]; then
+    typeset -g POWERLEVEL9K_COLOR_SCHEME_DARK=(
+      "background=#000000"
+      "foreground=#FFFFFF"
+      "cursor=#FFFFFF"
+    )
+  else
+    typeset -g POWERLEVEL9K_COLOR_SCHEME_LIGHT=(
+      "background=#FFFFFF"
+      "foreground=#000000"
+      "cursor=#000000"
+    )
+  fi
+
+  function dark() {
+    export POWERLEVEL9K_COLOR_SCHEME="dark"
+    for color in "${POWERLEVEL9K_COLOR_SCHEME_DARK[@]}"; do
+      print -n "\033]4;$color\007"
+    done
+    exec zsh
+  }
+
+  function light() {
+    export POWERLEVEL9K_COLOR_SCHEME="light"
+    for color in "${POWERLEVEL9K_COLOR_SCHEME_LIGHT[@]}"; do
+      print -n "\033]4;$color\007"
+    done
+    exec zsh
+  }
+
+  # Theme switching functions
+  function p10k-theme-dark() {
+    typeset -g POWERLEVEL9K_COLOR_SCHEME="dark"
+    typeset -g POWERLEVEL9K_DIR_FOREGROUND=39
+    typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=76
+    typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=178
+    typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_VIINS_FOREGROUND=76
+    typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_VIINS_FOREGROUND=196
+    source ~/.p10k.zsh
+  }
+
+  function p10k-theme-light() {
+    typeset -g POWERLEVEL9K_COLOR_SCHEME="light"
+    typeset -g POWERLEVEL9K_DIR_FOREGROUND=31
+    typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=70
+    typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=172
+    typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_VIINS_FOREGROUND=70
+    typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_VIINS_FOREGROUND=160
+    source ~/.p10k.zsh
+  }
+
+  # Add aliases for easy switching
+  alias dark='p10k-theme-dark'
+  alias light='p10k-theme-light'
+
   emulate -L zsh -o extended_glob
 
   # Unset all configuration options. This allows you to apply configuration changes without
