@@ -5,8 +5,8 @@
   environment.systemPackages = with pkgs; [
     xfce.xfce4-clipman-plugin
     gsettings-desktop-schemas
-    gnome.gnome-themes-extra
-    gnome.dconf-editor # Add this for better dconf management
+    gnome-themes-extra
+    dconf-editor # Add this for better dconf management
     xfce.xfconf # Add this for xfce settings management
 
     # Modify theme-switch script to include p10k integration
@@ -18,15 +18,12 @@
         "dark")
           gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
           xfconf-query -c xsettings -p /Net/ThemeName -s "Adwaita-dark"
-          echo "export POWERLEVEL9K_COLOR_SCHEME='dark'" >> ~/.zshrc.local
           ;;
         "light")
           gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
           xfconf-query -c xsettings -p /Net/ThemeName -s "Adwaita"
-          echo "export POWERLEVEL9K_COLOR_SCHEME='light'" >> ~/.zshrc.local
           ;;
         *)
-          echo "Usage: theme-switch [dark|light]"
           ;;
       esac
     '')
