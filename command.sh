@@ -28,3 +28,6 @@ rm -f ~/.xsession-errors{,.old} ~/.Xauthority
 # Clean Home Manager
 rm -rf ~/.config/{home-manager,nixpkgs} ~/.local/share/home-manager ~/.cache/home-manager
 
+rm -rf ~/.nix-profile
+rm -rf ~/.local/share/home-manager
+rm /home/jaykchen/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
