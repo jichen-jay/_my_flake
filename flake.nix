@@ -41,11 +41,11 @@
       ];
 
       mkHost =
-        {
-          system,
-          hostName,
-          isDesktop ? true,
-          extraModules ? [ ],
+        { system
+        , hostName
+        , isDesktop ? true
+        , extraModules ? [ ]
+        ,
         }:
         nixpkgs.lib.nixosSystem {
           inherit system;
@@ -56,12 +56,21 @@
             ++ extraModules
             ++ [
               {
+                # X11 and Desktop Environment
+                services.xserver = {
+                  enable = true;
+                  displayManager.lightdm.enable = true;
+                  xkb.layout = "us";
+                  xkb.variant = "";
+                };
                 networking.hostName = hostName;
                 time.timeZone = "America/Toronto";
                 home-manager = {
                   backupFileExtension = "bkp";
                   useGlobalPkgs = true;
                   useUserPackages = true;
+                  extraSpecialArgs = { inherit inputs; };
+
                   users.jaykchen =
                     { pkgs, config, ... }:
                     {
@@ -69,7 +78,7 @@
                         ./home.nix
                         ./modules/zsh.nix
                       ];
-                      
+                      home.stateVersion = "24.11";
                       programs.home-manager.enable = true;
                       home.sessionVariables = {
                         SHELL = "${pkgs.zsh}/bin/zsh";
@@ -83,9 +92,9 @@
               }
               {
                 systemd.tmpfiles.rules = [
-                  "d /home/jaykchen/.local 0700 jaykchen users"
-                  "d /home/jaykchen/.local/share 0700 jaykchen users"
-                  "d /home/jaykchen/.local/share/direnv 0700 jaykchen users"
+                  "d /home/jaykchen/.config 0700 jaykchen users"
+                  "d /home/jaykchen/.cache 0700 jaykchen users"
+                  "d /home/jaykchen/.local/state 0700 jaykchen users"
                 ];
               }
             ];
@@ -142,6 +151,7 @@
           extraModules = [
             ./modules/hardware-configuration-sg.nix
             {
+              nixpkgs.config.allowUnfree = true;
               boot.tmp.cleanOnBoot = true;
               zramSwap.enable = true;
               networking.domain = "localdomain";

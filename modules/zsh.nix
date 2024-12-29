@@ -4,13 +4,13 @@
 
   programs.zsh = {
     enable = true;
-    oh-my-zsh = {
-      enable = true;
-      plugins = [
-        "git"
-        "direnv"
-      ];
-    };
+    # oh-my-zsh = {
+    #   enable = true;
+    #   plugins = [
+    #     "git"
+    #     "direnv"
+    #   ];
+    # };
 
     enableCompletion = true;
     autosuggestion.enable = true;

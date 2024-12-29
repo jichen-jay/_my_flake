@@ -55,14 +55,6 @@
     user = "jaykchen";
   };
 
-  # X11 and Desktop Environment
-  services.xserver = {
-    enable = true;
-    displayManager.lightdm.enable = true;
-    xkb.layout = "us";
-    xkb.variant = "";
-  };
-
   services.ratbagd.enable = true;
 
   home-manager.users.jaykchen = {
