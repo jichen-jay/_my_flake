@@ -19,15 +19,22 @@ sudo chmod 700 /run/jaykchen
 # Clean shell configs
 rm -f ~/.zshenv ~/.zshrc ~/.p10k.zsh
 
-# Clean VSCode settings
 rm -f ~/.config/Code/User/settings.json{,.bkp,.backup}
 
-# Clean X11 session files
 rm -f ~/.xsession-errors{,.old} ~/.Xauthority
 
-# Clean Home Manager
 rm -rf ~/.config/{home-manager,nixpkgs} ~/.local/share/home-manager ~/.cache/home-manager
 
 rm -rf ~/.nix-profile
 rm -rf ~/.local/share/home-manager
 rm /home/jaykchen/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+
+
+#container 
+rm -rf ~/.local/share/containers
+
+
+#audio
+rm -rf ~/.config/pulse/*
+rm -rf ~/.pulse*
+
