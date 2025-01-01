@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 
@@ -43,6 +44,7 @@ let
 
 in
 {
+
   home = {
     enableNixpkgsReleaseCheck = false;
     username = "jaykchen";

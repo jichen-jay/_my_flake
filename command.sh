@@ -18,23 +18,45 @@ sudo chmod 700 /run/jaykchen
 
 # Clean shell configs
 rm -f ~/.zshenv ~/.zshrc ~/.p10k.zsh
+rm -f ~/.xsession-errors{,.old} ~/.Xauthority
 
 rm -f ~/.config/Code/User/settings.json{,.bkp,.backup}
 
-rm -f ~/.xsession-errors{,.old} ~/.Xauthority
 
 rm -rf ~/.config/{home-manager,nixpkgs} ~/.local/share/home-manager ~/.cache/home-manager
-
 rm -rf ~/.nix-profile
-rm -rf ~/.local/share/home-manager
 rm /home/jaykchen/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+sudo rm -f ~/.config/home-manager/home.nix
 
 
 #container 
-rm -rf ~/.local/share/containers
+sudo rm -rf ~/.local/share/containers
 
 
 #audio
-rm -rf ~/.config/pulse/*
+rm -rf ~/.config/pulse/
 rm -rf ~/.pulse*
+
+
+
+podman run \
+       --rm \
+       -it \
+       --volume "/nix/store:/nix/store:ro" \
+       --mount=type=tmpfs,tmpfs-size=512M,destination=/run \
+       --mount=type=tmpfs,tmpfs-size=512M,destination=/run/wrappers \
+       --systemd=always \
+       --env container=podman \
+       --rootfs root:O \
+       $(readlink result)/init
+is a less hacky way to setup the wrapppers directory, instead of using postBootCommands, and it also doesn’t cause the problems I reported above on 24.11 and unstable.
+
+
+podman run -d \                     
+  --name redis \
+  -p 127.0.0.1:6379:6379 \
+  --security-opt label=disable \
+  -v redis-data:/data \
+  redis:latest redis-server --bind 0.0.0.0
+
 

@@ -22,6 +22,7 @@
     home = "/home/jaykchen";
     group = "users";
     shell = pkgs.zsh;
+    linger = true;
 
     # Keep these for container user namespacing
     subUidRanges = [
