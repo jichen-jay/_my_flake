@@ -1,14 +1,9 @@
 {
   config,
-  pkgs,
   lib,
+  pkgs,
   ...
 }:
-
-let
-  user = "jaykchen";
-  uid = "1000";
-in
 {
   virtualisation = {
     podman = {
@@ -29,8 +24,8 @@ in
       };
       storage.settings.storage = {
         driver = "overlay";
-        runroot = "/run/user/${uid}/containers";
-        graphroot = "/home/${user}/.local/share/containers/storage";
+        runroot = "/run/user/1001/containers";
+        graphroot = "/home/jaykchen/.local/share/containers/storage";
         options.mount_program = "${pkgs.fuse-overlayfs}/bin/fuse-overlayfs";
       };
     };
@@ -53,27 +48,25 @@ in
       coreutils
       util-linux
     ];
-    sessionVariables.XDG_RUNTIME_DIR = "/run/user/${uid}";
+    sessionVariables.XDG_RUNTIME_DIR = "/run/user/1001";
   };
 
   systemd.user.extraConfig = ''
     DefaultEnvironment="PATH=/run/current-system/sw/bin:/run/wrappers/bin:${lib.makeBinPath [ pkgs.bash ]}"
   '';
 
-  environment.etc = {
-    "containers/policy.json" = {
-      mode = "0644";
-      text = lib.mkForce ''
-        {
-            "default": [{"type": "insecureAcceptAnything"}],
-            "transports": {
-                "docker": {
-                    "": [{"type": "insecureAcceptAnything"}]
-                }
-            }
-        }
-      '';
-    };
+  environment.etc."containers/policy.json" = {
+    mode = "0644";
+    text = lib.mkForce ''
+      {
+          "default": [{"type": "insecureAcceptAnything"}],
+          "transports": {
+              "docker": {
+                  "": [{"type": "insecureAcceptAnything"}]
+              }
+          }
+      }
+    '';
   };
 
   system.activationScripts = {
@@ -81,10 +74,10 @@ in
       deps = [ "users" ];
       text = ''
         mkdir -p /run/libpod
-        chown -R ${user}:users /run/libpod
+        chown -R jaykchen:users /run/libpod
         chmod 0755 /run/libpod
         touch /run/libpod/alive.lck
-        chown ${user}:users /run/libpod/alive.lck
+        chown jaykchen:users /run/libpod/alive.lck
         chmod 0644 /run/libpod/alive.lck
       '';
     };
@@ -96,25 +89,17 @@ in
       ];
       text = ''
         umask 0002
-
-        # Create and set permissions for container storage
-        mkdir -p -m 0700 /home/${user}/.local/share/containers/storage/{libpod,overlay,volumes}
-        chown -R ${user}:users /home/${user}/.local/share/containers
-        chmod -R 0700 /home/${user}/.local/share/containers
-
-        # Create and set permissions for runtime directories
-        mkdir -p -m 0700 /run/user/${uid}/{containers,libpod/tmp}
-        chown -R ${user}:users /run/user/${uid}/{containers,libpod}
-
-        # Create podman network if it doesn't exist
+        mkdir -p -m 0700 /home/jaykchen/.local/share/containers/storage/{libpod,overlay,volumes}
+        chown -R jaykchen:users /home/jaykchen/.local/share/containers
+        chmod -R 0700 /home/jaykchen/.local/share/containers
+        mkdir -p -m 0700 /run/user/1001/{containers,libpod/tmp}
+        chown -R jaykchen:users /run/user/1001/{containers,libpod}
         ${pkgs.podman}/bin/podman network exists podman || ${pkgs.podman}/bin/podman network create podman
-
-        # Setup container configuration directories
         mkdir -p -m 0700 /etc/containers/storage.conf.d
-        mkdir -p -m 0700 /home/${user}/.config/containers
-        touch /home/${user}/.config/containers/containers.conf
-        chown -R ${user}:users /home/${user}/.config/containers
-        chmod -R 0700 /home/${user}/.config/containers
+        mkdir -p -m 0700 /home/jaykchen/.config/containers
+        touch /home/jaykchen/.config/containers/containers.conf
+        chown -R jaykchen:users /home/jaykchen/.config/containers
+        chmod -R 0700 /home/jaykchen/.config/containers
       '';
     };
   };
@@ -122,25 +107,29 @@ in
   systemd.tmpfiles.rules = [
     "d /run/containers 0755 root root"
     "d /etc/containers 0755 root root"
-    "d /run/user/${uid} 0700 ${user} users - - - -"
-    "d /run/user/${uid}/containers 0700 ${user} users - - - -"
-    "d /run/user/${uid}/libpod 0700 ${user} users - - - -"
-    "d /run/user/${uid}/libpod/tmp 0700 ${user} users - - - -"
-    "d /run/libpod 0755 ${user} users"
-    "f /run/libpod/alive.lck 0644 ${user} users"
-    "d /run/libpod/tmp 0700 ${user} users"
-    "Z /run/libpod - ${user} users"
+    "d /run/user/1001 0700 jaykchen users - - - -"
+    "d /run/user/1001/containers 0700 jaykchen users - - - -"
+    "d /run/user/1001/libpod 0700 jaykchen users - - - -"
+    "d /run/user/1001/libpod/tmp 0700 jaykchen users - - - -"
+    "d /run/libpod 0755 jaykchen users"
+    "f /run/libpod/alive.lck 0644 jaykchen users"
+    "d /run/libpod/tmp 0700 jaykchen users"
+    "Z /run/libpod - jaykchen users"
+    ''d "${config.users.users.jaykchen.home}/.config" 0770 jaykchen jaykchen - -''
+    ''d "${config.users.users.jaykchen.home}/.config/home-manager" 0770 jaykchen jaykchen - -''
+    ''d "${config.users.users.jaykchen.home}/.local/state" 0755 jaykchen users - -''
+    ''d "${config.users.users.jaykchen.home}/.local/state/home-manager" 0755 jaykchen users - -''
   ];
 
   security.pam.loginLimits = [
     {
-      domain = "${user}";
+      domain = "jaykchen";
       type = "soft";
       item = "nofile";
       value = "524288";
     }
     {
-      domain = "${user}";
+      domain = "jaykchen";
       type = "hard";
       item = "nofile";
       value = "1048576";
@@ -154,4 +143,38 @@ in
       HandlePowerKey=suspend
     '';
   };
+
+  home-manager = {
+    backupFileExtension = "bkp";
+    useGlobalPkgs = true;
+    useUserPackages = true;
+  };
+
+  home-manager.users.jaykchen =
+    { pkgs, ... }:
+    {
+      home.activation = {
+        createDirs = {
+          before = [ "checkLinkTargets" ];
+          after = [ ];
+          data = ''
+            mkdir -p $HOME/.local/state/home-manager
+          '';
+        };
+        removeConflicts = {
+          before = [ "checkLinkTargets" ];
+          after = [ ];
+          data = ''
+            rm -f $HOME/.config/home-manager/*.bkp
+          '';
+        };
+      };
+
+      programs.bash.enable = true;
+      services.podman = {
+        enable = true;
+        autoUpdate.enable = true;
+      };
+      home.stateVersion = "24.11";
+    };
 }
