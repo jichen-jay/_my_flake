@@ -9,6 +9,8 @@
     dconf-editor # Add this for better dconf management
     xfce.xfconf # Add this for xfce settings management
 
+
+
     # Modify theme-switch script to include p10k integration
     (writeScriptBin "theme-switch" ''
       #!${pkgs.bash}/bin/bash
@@ -47,6 +49,7 @@
     enable = true;
     noDesktop = false;
     enableXfwm = true;
+     enableScreensaver = false;
   };
 
   # Display manager configuration
@@ -67,6 +70,13 @@
     };
 
     xdg.configFile = {
+      "xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml".source = ./xfce-xml/xfce4-panel.xml;
+      "xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml".source = ./xfce-xml/xfce4-desktop.xml;
+      "xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml".source =
+        ./xfce-xml/xfce4-power-manager.xml;
+      "xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml".source = ./xfce-xml/xfce4-notifyd.xml;
+      "xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml".source = ./xfce-xml/xfce4-terminal.xml;
+
       "xfce4/terminal/terminalrc".text = ''
         [Configuration]
         ColorForeground=#dcdcdc
@@ -77,16 +87,14 @@
         ThemeDark=true
       '';
 
-      "xfce4/xfconf/xfce-perchannel-xml/xsettings.xml".text = ''
-        <?xml version="1.0" encoding="UTF-8"?>
-        <channel name="xsettings" version="1.0">
-          <property name="Net" type="empty">
-            <property name="ThemeName" type="string" value="Adwaita-dark"/>
-            <property name="IconThemeName" type="string" value="Adwaita"/>
-          </property>
-        </channel>
-      '';
+      # Add any additional XFCE packages needed for your configuration
+      environment.systemPackages = with pkgs; [
+        xfce.xfce4-panel
+        xfce.xfce4-power-manager
+        xfce.xfce4-notifyd
+      ];
     };
+
   };
 
   # Printing

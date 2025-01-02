@@ -22,27 +22,25 @@ rm -f ~/.xsession-errors{,.old} ~/.Xauthority
 
 rm -f ~/.config/Code/User/settings.json{,.bkp,.backup}
 
-# Remove home-manager related files
+# Clean up home-manager related files
+rm -rf /home/jaykchen/.config
+
 rm -rf ~/.config/{home-manager,nixpkgs}
 rm -rf ~/.local/share/home-manager
 rm -rf ~/.cache/home-manager
 rm -rf ~/.nix-profile
+rm -rf ~/.local/state/{home-manager,nix}
 
 sudo rm -rf ~/.local/share/containers
+rm -rf ~/.config/containers
+sudo rm -rf /run/user/1001/{containers,libpod}
 
-rm -f ~/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
-rm -f ~/.config/home-manager/*.{backup,bkp}
 
-Remove all systemd user services:
 rm -rf ~/.config/systemd/user/*
 systemctl --user daemon-reload
 
-rm -rf ~/.config/containers
-rm -rf ~/.local/share/containers
-sudo rm -rf /run/user/1001/{containers,libpod}
+rm -f ~/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
 
-rm -rf ~/.local/state/home-manager
-rm -rf ~/.local/state/nix
 
 systemctl --user reset-failed
 systemctl --user daemon-reload
