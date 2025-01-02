@@ -6,10 +6,11 @@
     xfce.xfce4-clipman-plugin
     gsettings-desktop-schemas
     gnome-themes-extra
-    dconf-editor # Add this for better dconf management
-    xfce.xfconf # Add this for xfce settings management
-
-
+    dconf-editor
+    xfce.xfconf
+    xfce.xfce4-panel
+    xfce.xfce4-power-manager
+    xfce.xfce4-notifyd
 
     # Modify theme-switch script to include p10k integration
     (writeScriptBin "theme-switch" ''
@@ -49,7 +50,7 @@
     enable = true;
     noDesktop = false;
     enableXfwm = true;
-     enableScreensaver = false;
+    enableScreensaver = false;
   };
 
   # Display manager configuration
@@ -70,12 +71,11 @@
     };
 
     xdg.configFile = {
-      "xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml".source = ./xfce-xml/xfce4-panel.xml;
-      "xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml".source = ./xfce-xml/xfce4-desktop.xml;
-      "xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml".source =
-        ./xfce-xml/xfce4-power-manager.xml;
-      "xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml".source = ./xfce-xml/xfce4-notifyd.xml;
-      "xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml".source = ./xfce-xml/xfce4-terminal.xml;
+      "xfce4/xfconf/xfce-perchannel-xml/xfce4-screenshooter.xml".source =
+        ./xfce-xml/xfce4-screenshooter.xml;
+      "xfce4/xfconf/xfce-perchannel-xml/xfce4-clipman.xml".source = ./xfce-xml/xfce4-clipman.xml;
+      "xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml".source =
+        ./xfce-xml/xfce4-keyboard-shortcuts.xml;
 
       "xfce4/terminal/terminalrc".text = ''
         [Configuration]
@@ -86,13 +86,6 @@
         ColorScheme=dark
         ThemeDark=true
       '';
-
-      # Add any additional XFCE packages needed for your configuration
-      environment.systemPackages = with pkgs; [
-        xfce.xfce4-panel
-        xfce.xfce4-power-manager
-        xfce.xfce4-notifyd
-      ];
     };
 
   };
