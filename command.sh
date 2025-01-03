@@ -49,7 +49,11 @@ systemctl --user daemon-reload
 rm -rf ~/.config/pulse/
 rm -rf ~/.pulse*
 
-
+sudo rm -rf ~/.config/git
+sudo rm -rf ~/.config/systemd
+sudo rm -rf ~/.config/environment.d
+sudo rm -rf ~/.config/direnv
+sudo rm -rf ~/.config/fontconfig
 
 podman run \
        --rm \
@@ -70,5 +74,15 @@ podman run -d \
   --security-opt label=disable \
   -v redis-data:/data \
   redis:latest redis-server --bind 0.0.0.0
+
+
+
+mkdir -p ~/chrome-backup
+cp ~/.config/google-chrome/'Local State' ~/chrome-backup/
+cp -r ~/.config/google-chrome/Default ~/chrome-backup/
+
+mkdir -p ~/.config/google-chrome
+cp ~/chrome-backup/'Local State' ~/.config/google-chrome/
+cp -r ~/chrome-backup/Default ~/.config/google-chrome/
 
 

@@ -11,6 +11,7 @@
     xfce.xfce4-panel
     xfce.xfce4-power-manager
     xfce.xfce4-notifyd
+    google-chrome
 
     # Modify theme-switch script to include p10k integration
     (writeScriptBin "theme-switch" ''
@@ -89,6 +90,42 @@
     };
 
   };
+
+  system.activationScripts.chromeProfile = {
+    text = ''
+      BACKUP_DIR="/home/jaykchen/chrome-backup"
+      CHROME_DIR="/home/jaykchen/.config/google-chrome"
+
+      # Only proceed if backup exists
+      if [ -d "$BACKUP_DIR" ] && [ -f "$BACKUP_DIR/Local State" ] && [ -d "$BACKUP_DIR/Default" ]; then
+        # Ensure chrome directory exists
+        mkdir -p "$CHROME_DIR"
+
+        # Copy profile data with error checking
+        if ! cp -p "$BACKUP_DIR/Local State" "$CHROME_DIR/"; then
+          echo "Failed to copy Local State"
+          exit 1
+        fi
+
+        if ! cp -pr "$BACKUP_DIR/Default" "$CHROME_DIR/"; then
+          echo "Failed to copy Default directory"
+          exit 1
+        fi
+
+        # Fix permissions
+        chown -R jaykchen:users "$CHROME_DIR"
+        chmod -R 700 "$CHROME_DIR"
+      else
+        echo "Chrome backup not found or incomplete - skipping profile restoration"
+      fi
+    '';
+    deps = [ ];
+  };
+
+  # Ensure Chrome data directory persists across rebuilds
+  # environment.persistence."/nix/persist".directories = [
+  #   "/home/jaykchen/.config/google-chrome"
+  # ];
 
   # Printing
   services.printing.enable = true;
