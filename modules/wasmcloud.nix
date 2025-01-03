@@ -23,6 +23,20 @@
         chmod +x $out/bin/wash
       '';
     })
+    (pkgs.stdenv.mkDerivation {
+      pname = "spin";
+      version = "3.1.1";
+      src = pkgs.fetchurl {
+        url = "https://github.com/fermyon/spin/releases/download/v3.1.1/spin-v3.1.1-static-linux-amd64.tar.gz";
+        sha256 = "0yfjnrdn4hkvy45639r7cimhs52z27y3fjkg8dz21q7pdslbfpnb";
+      };
+      dontUnpack = true; # Prevent the automatic unpacking
+      installPhase = ''
+        mkdir -p $out/bin
+        tar -xzf $src -C $out/bin
+        chmod +x $out/bin/spin
+      '';
+    })
     (rustPlatform.buildRustPackage rec {
       pname = "wasmtime";
       version = "27.0.0";
