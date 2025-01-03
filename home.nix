@@ -3,6 +3,7 @@
   pkgs,
   lib,
   inputs,
+  isDesktop,
   ...
 }:
 
@@ -28,7 +29,6 @@ let
     tree
     curl
     file
-    xclip
     btop
     tokei
   ];
@@ -40,6 +40,10 @@ let
     xfce.xfce4-screenshooter
     xfce.xfce4-clipman-plugin
     zoom-us
+    xclip
+    gnome-keyring
+    jetbrains-mono
+    xdg-utils
   ];
 
 in
@@ -59,13 +63,10 @@ in
       git
       nixpkgs-fmt
       libsecret
-      gnome-keyring
-      jetbrains-mono
-      xdg-utils
     ]
     ++ devPackages
     ++ utilityPackages
-    ++ desktopPackages;
+    ++ (lib.optionals isDesktop desktopPackages);
 
   programs = {
     home-manager.enable = true;

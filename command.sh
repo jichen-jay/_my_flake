@@ -85,4 +85,10 @@ mkdir -p ~/.config/google-chrome
 cp ~/chrome-backup/'Local State' ~/.config/google-chrome/
 cp -r ~/chrome-backup/Default ~/.config/google-chrome/
 
+//nix on ubuntu
+nix-env -iA nixpkgs.nixos-rebuild
+experimental-features = nix-command flakes
+
+nix run home-manager/release-24.11 -- switch --flake .#jaykchen@b550
+
 

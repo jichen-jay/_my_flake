@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
-    # nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -79,7 +78,10 @@
                   backupFileExtension = "bkp";
                   useGlobalPkgs = true;
                   useUserPackages = true;
-                  extraSpecialArgs = { inherit inputs; };
+                  extraSpecialArgs = {
+                    inherit inputs;
+                    isDesktop = true;
+                  };
 
                   users.jaykchen =
                     { pkgs, config, ... }:
@@ -236,12 +238,21 @@
       homeConfigurations = {
         "jaykchen@b550" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          extraSpecialArgs = {
+            inherit inputs;
+            isDesktop = false;
+          };
           modules = [
             ./home.nix
             ./modules/zsh.nix
             (
               { pkgs, ... }:
               {
+
+                nixpkgs.config = {
+                  allowUnfree = true;
+                };
+
                 home = {
                   username = "jaykchen";
                   homeDirectory = "/home/jaykchen";
