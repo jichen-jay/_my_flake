@@ -13,7 +13,7 @@
   };
 
   outputs =
-    inputs@{ nixpkgs, ... }:
+    inputs@{ nixpkgs, home-manager, ... }:
     let
       baseModules = [
         ./modules/users.nix
@@ -150,6 +150,66 @@
           ];
         };
 
+        b550 = mkHost {
+          system = "x86_64-linux";
+          hostName = "b550";
+          isDesktop = false;
+          extraModules = [
+            (
+              { lib, pkgs, ... }:
+              {
+                # Preserve Ubuntu's boot and hardware settings
+                boot.loader.systemd-boot.enable = lib.mkForce false;
+                boot.loader.grub.enable = lib.mkForce false;
+                boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
+
+                # Disable NixOS hardware configuration
+                hardware.enableAllFirmware = lib.mkForce false;
+                # Add initrd configuration
+                boot.initrd = {
+                  enable = true;
+                  systemd.enable = true;
+                };
+
+                # Add kernel and initrd settings
+                boot.kernelPackages = pkgs.linuxPackages_latest;
+                boot.supportedFilesystems = [ "ext4" ];
+                # Keep Ubuntu's networking configuration
+                networking = {
+                  hostName = "b550";
+                  networkmanager.enable = lib.mkForce false;
+                };
+
+                # Filesystem configuration
+                fileSystems = {
+                  "/" = {
+                    device = "/dev/disk/by-uuid/ecac3106-73a9-4395-ba0e-8f40b13b8744";
+                    fsType = "ext4";
+                  };
+
+                  "/boot" = {
+                    device = "/dev/disk/by-uuid/A620-DE8C";
+                    fsType = "vfat";
+                    options = [
+                      "noauto"
+                      "nofail"
+                    ]; # Add safety options
+                  };
+                };
+
+                # Disable NixOS system-level services that Ubuntu handles
+                systemd.services = {
+                  NetworkManager = lib.mkForce { };
+                  systemd-udevd = lib.mkForce { };
+                  systemd-journald = lib.mkForce { };
+                  systemd-logind = lib.mkForce { };
+                };
+
+              }
+            )
+          ];
+        };
+
         cloud = mkHost {
           system = "x86_64-linux";
           hostName = "VM-0-11-debian";
@@ -169,6 +229,34 @@
                   programs.git = commonGitConfig;
                 };
             }
+          ];
+        };
+      };
+
+      homeConfigurations = {
+        "jaykchen@b550" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          modules = [
+            ./home.nix
+            ./modules/zsh.nix
+            (
+              { pkgs, ... }:
+              {
+                home = {
+                  username = "jaykchen";
+                  homeDirectory = "/home/jaykchen";
+                  stateVersion = "24.11";
+                };
+                programs.git = commonGitConfig;
+                home.packages = with pkgs; [
+                  lunarvim
+                  podman
+                  podman-compose
+                  podman-tui
+                  netavark
+                ];
+              }
+            )
           ];
         };
       };
