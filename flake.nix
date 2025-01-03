@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -14,9 +14,7 @@
 
   outputs =
     inputs@{ nixpkgs, ... }:
-
     let
-      # Base modules for all systems
       baseModules = [
         ./modules/users.nix
         ./modules/base.nix
@@ -27,7 +25,6 @@
         inputs.nixos-vscode-server.nixosModules.default
       ];
 
-      # Desktop-specific modules
       desktopModules = [
         ./modules/xfce.nix
         ./modules/printer.nix
@@ -38,14 +35,34 @@
         ./modules/access-shared-drive.nix
         ./modules/vscode.nix
         ./modules/wasmcloud.nix
+        {
+          services.xserver = {
+            enable = true;
+            displayManager.lightdm.enable = true;
+            xkb.layout = "us";
+            xkb.variant = "";
+          };
+        }
       ];
 
+      commonGitConfig = {
+        enable = true;
+        lfs.enable = true;
+        userName = "jaykchen@icloud.com";
+        userEmail = "jaykchen@icloud.com";
+        extraConfig = {
+          core = {
+            askPass = "";
+          };
+        };
+      };
+
       mkHost =
-        { system
-        , hostName
-        , isDesktop ? true
-        , extraModules ? [ ]
-        ,
+        {
+          system,
+          hostName,
+          isDesktop ? true,
+          extraModules ? [ ],
         }:
         nixpkgs.lib.nixosSystem {
           inherit system;
@@ -56,13 +73,6 @@
             ++ extraModules
             ++ [
               {
-                # X11 and Desktop Environment
-                services.xserver = {
-                  enable = true;
-                  displayManager.lightdm.enable = true;
-                  xkb.layout = "us";
-                  xkb.variant = "";
-                };
                 networking.hostName = hostName;
                 time.timeZone = "America/Toronto";
                 home-manager = {
@@ -87,6 +97,8 @@
                       home.packages = with pkgs; [
                         fzf
                       ];
+
+                      programs.git = commonGitConfig;
                     };
                 };
               }
@@ -117,13 +129,7 @@
                 {
                   home.stateVersion = "24.11";
                   home.packages = with pkgs; [ git ];
-                  programs.git = {
-                    enable = true;
-                    lfs.enable = true;
-                    userName = "jaykchen@icloud.com";
-                    userEmail = "jaykchen@icloud.com";
-                  };
-
+                  programs.git = commonGitConfig;
                 };
             }
           ];
@@ -155,22 +161,14 @@
               boot.tmp.cleanOnBoot = true;
               zramSwap.enable = true;
               networking.domain = "localdomain";
-              # system.stateVersion = "24.11";
               home-manager.users.root =
                 { pkgs, ... }:
                 {
                   home.stateVersion = "24.11";
                   home.packages = with pkgs; [ git ];
-                  programs.git = {
-                    enable = true;
-                    lfs.enable = true;
-                    userName = "jaykchen@icloud.com";
-                    userEmail = "jaykchen@icloud.com";
-                  };
-
+                  programs.git = commonGitConfig;
                 };
             }
-            # ./modules/cloud-specific.nix
           ];
         };
       };

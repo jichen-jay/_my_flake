@@ -3,7 +3,8 @@
   lib,
   pkgs,
   ...
-}: {
+}:
+{
   virtualisation = {
     podman = {
       enable = true;
@@ -18,7 +19,7 @@
         helper_binaries_dir = [ "${pkgs.netavark}/bin" ];
         network_backend = "netavark";
         runtime = "crun";
-        runtime_path = ["${pkgs.runc}/bin/runc"];
+        runtime_path = [ "${pkgs.runc}/bin/runc" ];
         database_path = "/home/jaykchen/.local/share/containers/storage/podman-containers.conf";
       };
       storage.settings.storage = {
@@ -46,6 +47,7 @@
       aardvark-dns
       coreutils
       util-linux
+      lunarvim
     ];
     sessionVariables.XDG_RUNTIME_DIR = "/run/user/1001";
   };

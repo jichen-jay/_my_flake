@@ -8,7 +8,6 @@
     natscli
     inetutils
     postman
-    lunarvim
   ];
 
   security.wrappers.tcpdump = {
