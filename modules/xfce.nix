@@ -33,7 +33,6 @@
     xfce.xfce4-power-manager
     xfce.xfce4-notifyd
     google-chrome
-    nodejs_22
 
     inputs.flox.packages.${pkgs.system}.default
 

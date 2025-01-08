@@ -13,13 +13,4 @@
     enable = true;
     desktopManager.xfce.enable = true;
   };
-
-  # not needed in pure Nixos
-  # environment.sessionVariables = {
-  #   XDG_DATA_DIRS = [
-  #     "${config.system.path}/share"
-  #     "$HOME/.nix-profile/share"
-  #     "$HOME/.share" # Add this
-  #   ];
-  # };
 }

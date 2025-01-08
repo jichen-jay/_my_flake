@@ -6,36 +6,28 @@
 }:
 {
   virtualisation = {
+    docker = {
+      enable = true;
+      rootless = {
+        enable = true;
+        setSocketVariable = true;
+      };
+    };
     podman = {
       enable = true;
-      dockerCompat = true;
+      # Set dockerCompat to false if using Docker
+      dockerCompat = false;
       defaultNetwork.settings.dns_enabled = true;
-    };
-    # Setting up containers.conf
-    containers = {
-      enable = true;
-      containersConf.settings.engine = {
-        # netavark needs to be in the path, podman is not
-        helper_binaries_dir = [ "${pkgs.netavark}/bin" ];
-        network_backend = "netavark";
-        runtime = "crun";
-        runtime_path = [ "${pkgs.runc}/bin/runc" ];
-        database_path = "/home/jaykchen/.local/share/containers/storage/podman-containers.conf";
-      };
-      storage.settings.storage = {
-        driver = "overlay";
-        runroot = "/run/user/1001/containers";
-        graphroot = "/home/jaykchen/.local/share/containers/storage";
-        options.mount_program = "${pkgs.fuse-overlayfs}/bin/fuse-overlayfs";
-      };
     };
   };
 
   environment = {
     systemPackages = with pkgs; [
+      docker
       podman
       podman-tui
       podman-compose
+      devcontainer
       buildah
       skopeo
       dive
@@ -52,12 +44,11 @@
     sessionVariables.XDG_RUNTIME_DIR = "/run/user/1001";
   };
 
-  # Move as much as possible to containers.conf
   systemd.tmpfiles.rules = [
     "d /run/containers 0755 root root"
     "d /etc/containers 0755 root root"
-    "d /run/user/1001 0700 jaykchen users - - - -"
-    "d /run/user/1001/containers 0700 jaykchen users - - - -"
+    "d %t/jaykchen 0700 jaykchen users"
+    "d %t/jaykchen/containers 0700 jaykchen users"
   ];
 
   security.pam.loginLimits = [
