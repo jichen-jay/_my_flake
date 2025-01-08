@@ -7,12 +7,19 @@
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
+    flox = {
+      url = "github:flox/flox/v1.3.8";
+    };
     nixos-vscode-server.url = "github:nix-community/nixos-vscode-server";
   };
 
   outputs =
-    inputs@{ nixpkgs, home-manager, ... }:
+    inputs@{
+      nixpkgs,
+      home-manager,
+      flox,
+      ...
+    }:
     let
       baseModules = [
         ./modules/users.nix
@@ -26,6 +33,7 @@
 
       desktopModules = [
         ./modules/xfce.nix
+        ./modules/tauri.nix
         ./modules/printer.nix
         ./modules/font.nix
         ./modules/dev-local.nix

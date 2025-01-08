@@ -49,6 +49,11 @@
       # Enable git stash status
       zstyle :prompt:pure:git:stash show yes
 
+      bindkey "^[[1;3C" forward-word
+      bindkey "^[[1;3D" backward-word
+      # unset zle_bracketed_paste
+      zle_highlight=(paste:none)
+
       prompt pure
     '';
 

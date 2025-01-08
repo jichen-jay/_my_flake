@@ -92,3 +92,9 @@ experimental-features = nix-command flakes
 nix run home-manager/release-24.11 -- switch --flake .#jaykchen@b550
 
 
+nix profile install nixpkgs#lunarvim
+rm -rf ~/.local/share/lunarvim\nrm -rf ~/.config/lvim\n
+mkdir -p ~/.config/lvim\n
+lvim _my_flake
+ pgrep -l nvim
+ pkill -9 nvim
