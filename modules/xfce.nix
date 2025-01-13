@@ -25,15 +25,19 @@
   # Add theme-related packages
   environment.systemPackages = with pkgs; [
     xfce.xfce4-clipman-plugin
-    gsettings-desktop-schemas
     gnome-themes-extra
+    gnome-settings-daemon
     dconf-editor
     xfce.xfconf
     xfce.xfce4-panel
     xfce.xfce4-power-manager
     xfce.xfce4-notifyd
+    xfce.xfce4-genmon-plugin
+    xfce.xfce4-settings
+    gsettings-desktop-schemas
+    glib
     google-chrome
-
+    nyxt
     inputs.flox.packages.${pkgs.system}.default
 
     (writeScriptBin "theme-switch" ''
@@ -68,7 +72,7 @@
     firefox.enable = true;
   };
 
-  # Configure XFCE specific settings
+  services.xserver.enable = true;
   services.xserver.desktopManager.xfce = {
     enable = true;
     noDesktop = false;

@@ -6,108 +6,75 @@
 }:
 
 {
-  environment.systemPackages = with pkgs; [
-    # Build tools
-    pkg-config
-
-    # Development packages
-    gtk3.dev
-    glib.dev
-    cairo.dev
-    gdk-pixbuf.dev
-    pango.dev
-    gobject-introspection.dev
-    webkitgtk_4_1.dev
-
-    # Core libraries
-    gtk3
-    glib
-    cairo
-    gdk-pixbuf
-    atk
-    dbus
-    pango
-    openssl_3
-    libsoup_3
-
-    # Node.js environment
-    nodejs_22
-    pnpm
-
-    # Tauri dependencies
-    at-spi2-atk
-    atkmm
-    gobject-introspection
-    harfbuzz
-    librsvg
-    webkitgtk_4_1
-    cargo-tauri
-
-    # Rust tools
-    rust-analyzer
-    rustc
-    rustup
-
-    # Additional dependencies
-    glib-networking
-    gsettings-desktop-schemas
+  # 1. Overlay to fix webkitgtk "4.1" pkg-config mismatch:
+  nixpkgs.overlays = [
+    (final: prev: {
+      webkitgtk_4_1_fixed = prev.webkitgtk_4_1.dev.overrideAttrs (old: {
+        postInstall = ''
+          ${old.postInstall or ""}
+          # Symlink so pkg-config finds "webkit2gtk-4.1.pc"
+          ln -s $out/lib/pkgconfig/webkit2gtk-4.0.pc \
+                $out/lib/pkgconfig/webkit2gtk-4.1.pc
+        '';
+      });
+    })
   ];
 
+  # 2. System packages: Tauri wants Rust + node + WebKit.
+  #    We'll also include cargo-tauri (for "cargo tauri" commands) and
+  #    some common GTK dependencies if your Tauri app uses them.
+  environment.systemPackages = with pkgs; [
+    # Rust + dev tools
+    rustc
+    cargo
+    cargo-tauri
+    nodejs
+    pkg-config
+
+    # For Tauri’s “webkit2gtk-4.1” check:
+    webkitgtk_4_1 # runtime libs
+    webkitgtk_4_1_fixed # dev output with "webkit2gtk-4.1.pc"
+    librsvg
+
+    # Common GTK dependencies:
+    gtk3
+    gobject-introspection
+    libsoup_3
+    cairo
+    pango
+    glib
+    openssl
+
+    # (Optional) If you want to manage Rust toolchains with rustup:
+    rustup
+    rust-analyzer
+  ];
+
+  # 3. Minimal environment variables.
+  #    Usually, Tauri can detect libs without these, but you might keep PKG_CONFIG_PATH
+  #    if you run pkg-config based checks.
   environment.sessionVariables = {
-    PKG_CONFIG_PATH =
-      with pkgs;
-      lib.concatStringsSep ":" [
-        "${webkitgtk_4_1.dev}/lib/pkgconfig"
-        "${librsvg.dev}/lib/pkgconfig"
-        "${gtk3.dev}/lib/pkgconfig"
-        "${glib.dev}/lib/pkgconfig"
-        "${cairo.dev}/lib/pkgconfig"
-        "${pango.dev}/lib/pkgconfig"
-        "${gdk-pixbuf.dev}/lib/pkgconfig"
-        "${gobject-introspection.dev}/lib/pkgconfig"
-      ];
+    # Make sure pkg-config sees the newly-symlinked "webkit2gtk-4.1.pc"
+    PKG_CONFIG_PATH = lib.makeSearchPathOutput "lib" "pkgconfig" [
+      pkgs.webkitgtk_4_1_fixed
+    ];
 
-    LD_LIBRARY_PATH =
-      with pkgs;
-      lib.makeLibraryPath [
-        webkitgtk_4_1
-        gtk3
-        cairo
-        gdk-pixbuf
-        glib
-        dbus
-        openssl_3
-        librsvg
-      ];
-      
-    XDG_DATA_DIRS = lib.mkForce (
-      with pkgs;
-      lib.concatStringsSep ":" [
-        "${gsettings-desktop-schemas}/share/gsettings-schemas/${gsettings-desktop-schemas.name}"
-        "${gtk3}/share/gsettings-schemas/${gtk3.name}"
-        "/nix/store/zy2d9l86q8bhs16cq7ywba5pp5v5q7q7-desktops/share"
-        "$XDG_DATA_DIRS"
-      ]
-    );
-
-    GI_TYPELIB_PATH =
-      with pkgs;
-      lib.makeSearchPath "lib/girepository-1.0" [
-        gtk3
-        glib
-        gobject-introspection
-        webkitgtk_4_1
-        librsvg
-      ];
+    # If you encounter GPU issues, disabling DMA buf rendering can help:
+    WEBKIT_DISABLE_DMABUF_RENDERER = "1";
   };
 
+  # 4. DBus + dconf services are often required by GTK apps:
+  services.dbus.enable = true;
+  programs.dconf.enable = true;
+
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [ zlib ];
+
+  # 5. (Optional) Shell init for `rustup`:
   environment.shellInit = ''
     if command -v rustup >/dev/null 2>&1; then
       rustup default stable
-      rustup target add wasm32-unknown-unknown
-      rustup target add wasm32-wasi
-      rustup target add wasm32-wasip1
-      rustup target add wasm32-wasip2
+      rustup component add rust-src rust-analyzer
     fi
   '';
 }

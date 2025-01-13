@@ -2,9 +2,6 @@
 
 {
   environment.systemPackages = with pkgs; [
-    netcat
-    socat
-    tcpdump
     wasm-tools
     wabt
     # wireshark

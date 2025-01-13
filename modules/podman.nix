@@ -27,7 +27,6 @@
       podman
       podman-tui
       podman-compose
-      devcontainer
       buildah
       skopeo
       dive
@@ -40,9 +39,14 @@
       coreutils
       util-linux
       lunarvim
+      openssl
+      openssl_3
     ];
     sessionVariables.XDG_RUNTIME_DIR = "/run/user/1001";
   };
+
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [ zlib ];
 
   systemd.tmpfiles.rules = [
     "d /run/containers 0755 root root"

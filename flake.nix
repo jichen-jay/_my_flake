@@ -11,12 +11,14 @@
       url = "github:flox/flox/v1.3.8";
     };
     nixos-vscode-server.url = "github:nix-community/nixos-vscode-server";
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
   outputs =
     inputs@{
       nixpkgs,
       home-manager,
+      flake-utils,
       flox,
       ...
     }:
@@ -33,12 +35,9 @@
 
       desktopModules = [
         ./modules/xfce.nix
-        ./modules/tauri.nix
         ./modules/printer.nix
         ./modules/font.nix
-        ./modules/dev-local.nix
-        ./modules/dark-theme.nix
-        ./modules/desktop-entry.nix
+        ./modules/net-tools.nix
         ./modules/access-shared-drive.nix
         ./modules/vscode.nix
         ./modules/wasmcloud.nix

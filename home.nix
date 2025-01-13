@@ -80,6 +80,11 @@ in
         st = "git status";
         lg = "git log";
         gs = "git log -S";
+        dls = "sudo docker image ls";
+        dps = "sudo docker ps -a";
+        dcm = "sudo docker commit";
+        dri = "sudo docker run --rm -it";
+        dpl = "sudo docker pull";
       };
     };
 

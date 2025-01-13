@@ -7,6 +7,9 @@
   environment.systemPackages = with pkgs; [
     natscli
     inetutils
+    netcat
+    socat
+    tcpdump
     postman
   ];
 

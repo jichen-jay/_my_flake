@@ -54,6 +54,19 @@
       # unset zle_bracketed_paste
       zle_highlight=(paste:none)
 
+      # Aliases from bash.shellAliases in home.nix
+      alias ll="ls -l"
+      alias ci="git commit"
+      alias co="git checkout"
+      alias st="git status"
+      alias lg="git log"
+      alias gs="git log -S"
+      alias dls="sudo docker image ls"
+      alias dps="sudo docker ps -a"
+      alias dcm="sudo docker commit"
+      alias dri="sudo docker run --rm -it"
+      alias dpl="sudo docker pull"
+
       prompt pure
     '';
 
