@@ -115,7 +115,7 @@
           system = "x86_64-linux";
           hostName = "pn53";
           isDesktop = false;
-          useHomeManager = false; # Cloud host: no Home Manager or VSCode Server
+          useHomeManager = true; # Cloud host: no Home Manager or VSCode Server
           useVSCodeServer = false;
           extraModules = [ ./modules/hardware-configuration-pn53.nix ];
         };
