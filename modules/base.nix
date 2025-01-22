@@ -3,6 +3,11 @@
 {
   nixpkgs.config.allowUnfree = true;
 
+  environment.systemPackages = with pkgs; [
+    pass
+    gnupg
+  ];
+  
   nix = {
     package = pkgs.nix;
     settings = {

@@ -39,7 +39,7 @@
 
           Host b550 md16 pn53
             User jaykchen
-            IdentityFile ~/.ssh/pn53_id_rsa
+            IdentityFile ~/.ssh/nixos_ed25519
             ForwardAgent yes
             AddKeysToAgent yes
             Compression yes
@@ -66,7 +66,7 @@
           Host sv
             User root
             HostName 43.130.1.178
-            IdentityFile ~/.ssh/pn53_id_rsa
+            IdentityFile ~/.ssh/nixos_ed25519
             ForwardAgent yes
             AddKeysToAgent yes
             Compression yes
