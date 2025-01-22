@@ -61,7 +61,7 @@
         in
         nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = { inherit inputs; };
+          specialArgs = { inherit inputs isDesktop; };
           modules =
             baseModules
             ++ (if isDesktop then desktopModules else [ ])
@@ -77,29 +77,34 @@
                 users.defaultUserShell = pkgs.zsh;
                 users.users.root.shell = pkgs.zsh;
 
-                # Optional Home Manager configuration for specific hosts
-                home-manager.enable = if useHomeManager then true else false;
-
                 systemd.tmpfiles.rules = [
                   "d /home/jaykchen/.config 0700 jaykchen users"
                   "d /home/jaykchen/.cache 0700 jaykchen users"
                   "d /home/jaykchen/.local/state 0700 jaykchen users"
                 ];
 
-                # MARKED CHANGE: Add Home Manager user configuration for jaykchen
-                home-manager.users.jaykchen =
-                  if useHomeManager then
-                    { pkgs, ... }:
-                    {
-                      home.stateVersion = "24.11"; # Match Nixpkgs version
-                      programs.zsh.enable = true;
-                      home.packages = with pkgs; [
-                        fzf
-                        starship
-                      ];
-                    }
-                  else
-                    null;
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+
+                  extraSpecialArgs = {
+                    inherit inputs isDesktop;
+                  };
+                  users.jaykchen =
+                    if useHomeManager then
+                      { pkgs, ... }:
+                      {
+                        imports = [ ./home.nix ];
+                        home.stateVersion = "24.11";
+                        programs.zsh.enable = true;
+                        home.packages = with pkgs; [
+                          fzf
+                          starship
+                        ];
+                      }
+                    else
+                      null;
+                };
               }
             ];
         };

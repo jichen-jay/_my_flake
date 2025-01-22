@@ -51,8 +51,6 @@ in
 
   home = {
     enableNixpkgsReleaseCheck = false;
-    username = "jaykchen";
-    homeDirectory = lib.mkForce "/home/jaykchen";
     stateVersion = "24.11";
   };
 

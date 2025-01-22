@@ -13,11 +13,9 @@
       "flakes"
     ];
     substituters = [
-      "https://cache.flox.dev"
       "https://neovim-nightly.cachix.org" # Keeping your existing cachix
     ];
     trusted-public-keys = [
-      "flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs="
       "neovim-nightly.cachix.org-1:feIoInHRevVEplgdZvQDjhp11kYASYCE2NGY9hNrwxY="
     ];
     auto-optimise-store = true;
@@ -39,7 +37,6 @@
     google-chrome
     chromium
     nyxt
-    inputs.flox.packages.${pkgs.system}.default
 
     (writeScriptBin "theme-switch" ''
       #!${pkgs.bash}/bin/bash
