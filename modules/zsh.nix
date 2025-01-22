@@ -112,8 +112,4 @@
     };
   };
 
-  home.packages = with pkgs; [
-    fzf
-    starship
-  ];
 }

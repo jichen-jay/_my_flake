@@ -1,14 +1,11 @@
 {
-  description = "NixOS configuration with flakes and Home Manager options";
+  description = "NixOS configuration with flakes, optimized for Zsh, Home Manager, and VSCode Server";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     home-manager = {
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-    flox = {
-      url = "github:flox/flox/v1.3.8";
     };
     nixos-vscode-server.url = "github:nix-community/nixos-vscode-server";
     flake-utils.url = "github:numtide/flake-utils";
@@ -18,19 +15,19 @@
     inputs@{
       nixpkgs,
       home-manager,
+      nixos-vscode-server,
       flake-utils,
-      flox,
       ...
     }:
     let
+      pkgsForSystem = system: import nixpkgs { inherit system; };
+
       baseModules = [
         ./modules/users.nix
         ./modules/base.nix
         ./modules/ssh.nix
         ./modules/podman.nix
         ./modules/services.nix
-        inputs.home-manager.nixosModules.home-manager
-        inputs.nixos-vscode-server.nixosModules.default
       ];
 
       desktopModules = [
@@ -46,113 +43,93 @@
             enable = true;
             displayManager.lightdm.enable = true;
             xkb.layout = "us";
-            xkb.variant = "";
           };
         }
       ];
-
-      commonGitConfig = {
-        enable = true;
-        lfs.enable = true;
-        userName = "jaykchen@icloud.com";
-        userEmail = "jaykchen@icloud.com";
-        extraConfig = {
-          core = {
-            askPass = "";
-          };
-        };
-      };
 
       mkHost =
         {
           system,
           hostName,
-          isDesktop ? true,
+          isDesktop ? false,
+          useHomeManager ? false,
+          useVSCodeServer ? false,
           extraModules ? [ ],
         }:
+        let
+          pkgs = pkgsForSystem system;
+        in
         nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = { inherit inputs; };
           modules =
             baseModules
             ++ (if isDesktop then desktopModules else [ ])
+            ++ (if useHomeManager then [ inputs.home-manager.nixosModules.home-manager ] else [ ])
+            ++ (if useVSCodeServer then [ inputs.nixos-vscode-server.nixosModules.default ] else [ ])
             ++ extraModules
             ++ [
               {
                 networking.hostName = hostName;
                 time.timeZone = "America/Toronto";
-                home-manager = {
-                  backupFileExtension = "bkp";
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  extraSpecialArgs = {
-                    inherit inputs;
-                    isDesktop = true;
-                  };
 
-                  users.jaykchen =
-                    { pkgs, config, ... }:
-                    {
-                      imports = [
-                        ./home.nix
-                        ./modules/zsh.nix
-                      ];
-                      home.stateVersion = "24.11";
-                      programs.home-manager.enable = true;
-                      home.sessionVariables = {
-                        SHELL = "${pkgs.zsh}/bin/zsh";
-                      };
+                # Set Zsh as the default shell for all users and root
+                users.defaultUserShell = pkgs.zsh;
+                users.users.root.shell = pkgs.zsh;
 
-                      home.packages = with pkgs; [
-                        fzf
-                      ];
+                # Optional Home Manager configuration for specific hosts
+                home-manager.enable = if useHomeManager then true else false;
 
-                      programs.git = commonGitConfig;
-                    };
-                };
-              }
-              {
                 systemd.tmpfiles.rules = [
                   "d /home/jaykchen/.config 0700 jaykchen users"
                   "d /home/jaykchen/.cache 0700 jaykchen users"
                   "d /home/jaykchen/.local/state 0700 jaykchen users"
                 ];
+
+                # MARKED CHANGE: Add Home Manager user configuration for jaykchen
+                home-manager.users.jaykchen =
+                  if useHomeManager then
+                    { pkgs, ... }:
+                    {
+                      home.stateVersion = "24.11"; # Match Nixpkgs version
+                      programs.zsh.enable = true;
+                      home.packages = with pkgs; [
+                        fzf
+                        starship
+                      ];
+                    }
+                  else
+                    null;
               }
             ];
         };
     in
     {
       nixosConfigurations = {
-        formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
-
         pn53 = mkHost {
           system = "x86_64-linux";
           hostName = "pn53";
           isDesktop = false;
-          extraModules = [
-            ./modules/hardware-configuration-pn53.nix
-            {
-              boot.tmp.cleanOnBoot = true;
-              home-manager.users.root =
-                { pkgs, ... }:
-                {
-                  home.stateVersion = "24.11";
-                  home.packages = with pkgs; [ git ];
-                  programs.git = commonGitConfig;
-                };
-            }
-          ];
+          useHomeManager = false; # Cloud host: no Home Manager or VSCode Server
+          useVSCodeServer = false;
+          extraModules = [ ./modules/hardware-configuration-pn53.nix ];
         };
 
         nr200 = mkHost {
           system = "x86_64-linux";
           hostName = "nr200";
+          isDesktop = true;
+          useHomeManager = true; # Desktop: includes Home Manager and VSCode Server
+          useVSCodeServer = true;
           extraModules = [ ./modules/hardware-configuration-nr200.nix ];
         };
 
         md16 = mkHost {
           system = "x86_64-linux";
           hostName = "md16";
+          isDesktop = true;
+          useHomeManager = true; # Desktop: includes Home Manager and VSCode Server
+          useVSCodeServer = true;
           extraModules = [
             ./modules/hardware-configuration-md16.nix
             ./modules/intel-gpu.nix
@@ -162,119 +139,24 @@
         b550 = mkHost {
           system = "x86_64-linux";
           hostName = "b550";
-          isDesktop = false;
+          isDesktop = true;
+          useHomeManager = true; # Desktop: includes Home Manager and VSCode Server
+          useVSCodeServer = true;
           extraModules = [
-            (
-              { lib, pkgs, ... }:
-              {
-                # Preserve Ubuntu's boot and hardware settings
-                boot.loader.systemd-boot.enable = lib.mkForce false;
-                boot.loader.grub.enable = lib.mkForce false;
-                boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
-
-                # Disable NixOS hardware configuration
-                hardware.enableAllFirmware = lib.mkForce false;
-                # Add initrd configuration
-                boot.initrd = {
-                  enable = true;
-                  systemd.enable = true;
-                };
-
-                # Add kernel and initrd settings
-                boot.kernelPackages = pkgs.linuxPackages_latest;
-                boot.supportedFilesystems = [ "ext4" ];
-                # Keep Ubuntu's networking configuration
-                networking = {
-                  hostName = "b550";
-                  networkmanager.enable = lib.mkForce false;
-                };
-
-                # Filesystem configuration
-                fileSystems = {
-                  "/" = {
-                    device = "/dev/disk/by-uuid/ecac3106-73a9-4395-ba0e-8f40b13b8744";
-                    fsType = "ext4";
-                  };
-
-                  "/boot" = {
-                    device = "/dev/disk/by-uuid/A620-DE8C";
-                    fsType = "vfat";
-                    options = [
-                      "noauto"
-                      "nofail"
-                    ]; # Add safety options
-                  };
-                };
-
-                # Disable NixOS system-level services that Ubuntu handles
-                systemd.services = {
-                  NetworkManager = lib.mkForce { };
-                  systemd-udevd = lib.mkForce { };
-                  systemd-journald = lib.mkForce { };
-                  systemd-logind = lib.mkForce { };
-                };
-
-              }
-            )
+            ./modules/hardware-configuration-b550.nix
+            { networking.domainName = "localdomain"; }
           ];
         };
 
-        cloud = mkHost {
+        cloud1 = mkHost {
           system = "x86_64-linux";
-          hostName = "VM-0-11-debian";
+          hostName = "cloud1";
           isDesktop = false;
+          useHomeManager = false; # Cloud host: no Home Manager or VSCode Server
+          useVSCodeServer = false;
           extraModules = [
             ./modules/hardware-configuration-sg.nix
-            {
-              nixpkgs.config.allowUnfree = true;
-              boot.tmp.cleanOnBoot = true;
-              zramSwap.enable = true;
-              networking.domain = "localdomain";
-              home-manager.users.root =
-                { pkgs, ... }:
-                {
-                  home.stateVersion = "24.11";
-                  home.packages = with pkgs; [ git ];
-                  programs.git = commonGitConfig;
-                };
-            }
-          ];
-        };
-      };
-
-      homeConfigurations = {
-        "jaykchen@b550" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          extraSpecialArgs = {
-            inherit inputs;
-            isDesktop = false;
-          };
-          modules = [
-            ./home.nix
-            ./modules/zsh.nix
-            (
-              { pkgs, ... }:
-              {
-
-                nixpkgs.config = {
-                  allowUnfree = true;
-                };
-
-                home = {
-                  username = "jaykchen";
-                  homeDirectory = "/home/jaykchen";
-                  stateVersion = "24.11";
-                };
-                programs.git = commonGitConfig;
-                home.packages = with pkgs; [
-                  lunarvim
-                  podman
-                  podman-compose
-                  podman-tui
-                  netavark
-                ];
-              }
-            )
+            { zramSwap.enable = true; }
           ];
         };
       };
