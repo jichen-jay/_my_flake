@@ -18,10 +18,18 @@
     initExtra = ''
       eval "$(direnv hook zsh)"
 
-      # zsh-autocomplete configuration
-      zstyle ':autocomplete:*' min-input 1
-      zstyle ':autocomplete:*' insert-unambiguous yes
-      zstyle ':autocomplete:*' widget-style menu-select
+      # FZF configuration
+      export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --info=inline"
+      export FZF_CTRL_R_OPTS="--sort --exact"
+
+      # Enable fzf keybindings
+      source ${pkgs.fzf}/share/fzf/key-bindings.zsh
+      source ${pkgs.fzf}/share/fzf/completion.zsh
+
+      # fzf-tab configuration
+      zstyle ':fzf-tab:*' fzf-command fzf
+      zstyle ':fzf-tab:*' fzf-flags '--height=40% --layout=reverse --border --info=inline'
+      zstyle ':fzf-tab:*' continuous-trigger 'tab'
 
       bindkey "^[[1;3C" forward-word
       bindkey "^[[1;3D" backward-word
@@ -51,12 +59,12 @@
         src = pkgs.zsh-fzf-history-search;
       }
       {
-        name = "zsh-autocomplete";
+        name = "fzf-tab";
         src = pkgs.fetchFromGitHub {
-          owner = "marlonrichert";
-          repo = "zsh-autocomplete";
-          rev = "main";
-          sha256 = "sha256-o8IQszQ4/PLX1FlUvJpowR2Tev59N8lI20VymZ+Hp4w=";
+          owner = "Aloxaf";
+          repo = "fzf-tab";
+          rev = "master";
+          hash = "sha256-Qv8zAiMtrr67CbLRrFjGaPzFZcOiMVEFLg1Z+N6VMhg=";
         };
       }
     ];
@@ -66,6 +74,7 @@
     enable = true;
     enableZshIntegration = true;
     settings = {
+      # Starship settings remain unchanged
       add_newline = false;
       character = {
         success_symbol = "[➜](bold green)";

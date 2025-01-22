@@ -98,3 +98,23 @@ mkdir -p ~/.config/lvim\n
 lvim _my_flake
  pgrep -l nvim
  pkill -9 nvim
+
+
+sudo NIX_SSHOPTS="-i /home/jaykchen/.ssh/nixos_ed25519" \
+  nixos-rebuild switch \
+  --use-remote-sudo \
+  --target-host jaykchen@10.0.0.93 \
+  --build-host jaykchen@10.0.0.93 \
+  --flake .#pn53
+
+
+nix build .#nixosConfigurations.jaykchen.config.system.build.toplevel \
+  --store 'ssh://jaykchen@10.0.0.93?remote-store=local?root=/' --flake .#pn53
+
+
+nix build .#nixosConfigurations.pn53.config.system.build.toplevel --store 'ssh://jaykchen@10.0.0.93?remote-store=local?root=/' --flake .#pn53
+
+
+NIX_SSHOPTS="-i /home/jaykchen/.ssh/nixos_ed25519 -o StrictHostKeyChecking=accept-new" \
+  nix build ".#nixosConfigurations.pn53.config.system.build.toplevel" \
+  --store "ssh-ng://root@10.0.0.93?remote-store=local?root=/"

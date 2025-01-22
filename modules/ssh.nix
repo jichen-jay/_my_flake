@@ -39,7 +39,7 @@
 
           Host b550 md16 pn53
             User jaykchen
-            IdentityFile ~/.ssh/nixos_ed25519
+            IdentityFile /home/jaykchen/.ssh/nixos_ed25519
             ForwardAgent yes
             AddKeysToAgent yes
             Compression yes

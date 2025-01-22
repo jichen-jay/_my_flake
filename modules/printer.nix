@@ -41,18 +41,6 @@
           PageSize = "Letter";
         };
       }
-      {
-        name = "VirtualPostScript";
-        deviceUri = "file:///tmp/print.ps";
-        model = "drv:///sample.drv/generic.ppd";
-        description = "Virtual PostScript Printer";
-        ppdOptions = {
-          PageSize = "A4";
-          ColorModel = "RGB";
-          Resolution = "2400x1200dpi";
-          MediaType = "Plain";
-        };
-      }
     ];
   };
 }
