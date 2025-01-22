@@ -41,6 +41,7 @@
       lunarvim
       openssl
       openssl_3
+      glow
     ];
     sessionVariables.XDG_RUNTIME_DIR = "/run/user/1001";
   };

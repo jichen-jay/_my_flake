@@ -37,6 +37,7 @@
     gsettings-desktop-schemas
     glib
     google-chrome
+    chromium
     nyxt
     inputs.flox.packages.${pkgs.system}.default
 

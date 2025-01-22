@@ -7,8 +7,9 @@
   ];
 
   services.printing.drivers = [
-    pkgs.gutenprint # For many different printers
-    pkgs.brlaser # For Brother printers
+    pkgs.gutenprint
+    pkgs.brlaser
+    pkgs.hplip
   ];
 
   services.printing = {
@@ -26,17 +27,32 @@
   services.avahi = {
     enable = true;
     nssmdns4 = true;
+    openFirewall = true;
   };
 
   hardware.printers = {
-    ensurePrinters = [{
-      name = "PrinterName";
-      location = "Home";
-      deviceUri = "ipp://printer-ip-address:631/printers/PrinterName";
-      model = "drv:///sample.drv/generic.ppd";
-      ppdOptions = {
-        PageSize = "Letter";
-      };
-    }];
+    ensurePrinters = [
+      {
+        name = "ET-2850";
+        location = "Home";
+        deviceUri = "ipp://printer-ip-address:631/printers/PrinterName";
+        model = "drv:///sample.drv/generic.ppd";
+        ppdOptions = {
+          PageSize = "Letter";
+        };
+      }
+      {
+        name = "VirtualPostScript";
+        deviceUri = "file:///tmp/print.ps";
+        model = "drv:///sample.drv/generic.ppd";
+        description = "Virtual PostScript Printer";
+        ppdOptions = {
+          PageSize = "A4";
+          ColorModel = "RGB";
+          Resolution = "2400x1200dpi";
+          MediaType = "Plain";
+        };
+      }
+    ];
   };
 }
