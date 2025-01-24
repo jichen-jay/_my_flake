@@ -27,7 +27,6 @@
         ./modules/base.nix
         ./modules/ssh.nix
         ./modules/podman.nix
-        ./modules/services.nix
       ];
 
       desktopModules = [
@@ -70,7 +69,17 @@
             ++ extraModules
             ++ [
               {
-                networking.hostName = hostName;
+
+                networking = {
+                  hostName = hostName;
+                  networkmanager.enable = true;
+                  firewall.allowedTCPPorts = [
+                    22
+                    8000
+                    8080
+                  ];
+                };
+
                 time.timeZone = "America/Toronto";
 
                 # Set Zsh as the default shell for all users and root

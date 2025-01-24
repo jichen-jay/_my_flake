@@ -19,18 +19,7 @@ let
   ];
 
   utilityPackages = with pkgs; [
-    ripgrep
-    fzf
-    tmux
-    bat
     eza
-    jq
-    wget
-    tree
-    curl
-    file
-    btop
-    tokei
   ];
 
   desktopPackages = with pkgs; [
@@ -57,9 +46,6 @@ in
   home.packages =
     with pkgs;
     [
-      nil
-      git
-      nixpkgs-fmt
       libsecret
     ]
     ++ devPackages
@@ -71,19 +57,6 @@ in
 
     bash = {
       enable = true;
-      shellAliases = {
-        ll = "ls -l";
-        ci = "git commit";
-        co = "git checkout";
-        st = "git status";
-        lg = "git log";
-        gs = "git log -S";
-        dls = "sudo docker image ls";
-        dps = "sudo docker ps -a";
-        dcm = "sudo docker commit";
-        dri = "sudo docker run --rm -it";
-        dpl = "sudo docker pull";
-      };
     };
 
     direnv = {

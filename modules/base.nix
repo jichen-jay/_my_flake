@@ -1,4 +1,3 @@
-# ./modules/base.nix
 {
   config,
   inputs,
@@ -8,20 +7,37 @@
 {
   nixpkgs.config.allowUnfree = true;
 
-  # System-wide ZSH plugins
   environment.pathsToLink = [ "/share/zsh" ];
   environment = {
+    shells = with pkgs; [ zsh ];
+
     systemPackages = with pkgs; [
       pass
       gnupg
+      pinentry
+      git
+      btop
+      tmux
+      tree
+      wget
+      curl
       fzf
       starship
       zsh
       zsh-syntax-highlighting
       zsh-fzf-history-search
+      zsh-completions
+      zsh-autosuggestions
+      lunarvim
+      nil
+      nixpkgs-fmt
+      ripgrep
+      bat
+      jq
+      file
+      tokei
     ];
 
-    # System-wide shell aliases
     shellAliases = {
       ll = "ls -l";
       ci = "git commit";
@@ -34,6 +50,12 @@
       dcm = "sudo docker commit";
       dri = "sudo docker run --rm -it";
       dpl = "sudo docker pull";
+    };
+
+    sessionVariables = {
+      EDITOR = "vim";
+      SHELL = "${pkgs.zsh}/bin/zsh";
+      LANG = "en_US.UTF-8";
     };
   };
 
@@ -50,16 +72,40 @@
         "@wheel"
         "jaykchen"
       ];
+      auto-optimise-store = true;
+    };
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 30d";
     };
   };
 
   system.stateVersion = "24.11";
+
+  programs.tmux = {
+    enable = true;
+    clock24 = true;
+    extraConfig = ''
+      set -g mouse off
+    '';
+    plugins = with pkgs.tmuxPlugins; [
+      yank
+      resurrect
+      continuum
+    ];
+  };
 
   programs.zsh = {
     enable = true;
     enableCompletion = true;
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
+
+    shellInit = ''
+      # Base shell initialization
+      export LANG=en_US.UTF-8
+    '';
 
     interactiveShellInit = ''
       eval "$(direnv hook zsh)"
@@ -84,6 +130,8 @@
 
     promptInit = ''
       eval "$(${pkgs.starship}/bin/starship init zsh)"
+      autoload -U promptinit
+      promptinit
     '';
   };
 
@@ -126,5 +174,4 @@
       };
     };
   };
-
 }

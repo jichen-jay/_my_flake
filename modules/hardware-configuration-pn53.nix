@@ -53,6 +53,32 @@
 
   swapDevices = [ ];
 
+  networking = {
+
+    # useDHCP = true; # Enable global DHCP since we only have one main interface
+
+    # Simple interface configuration
+    interfaces.eth0 = {
+      useDHCP = true;
+    };
+
+    # interfaces = {
+    #   enp2s0 = {
+    #     useDHCP = true;
+    #   };
+    #   wlp3s0 = {
+    #     useDHCP = true;
+    #   };
+    # };
+
+    # # Enable wireless networking
+    # wireless = {
+    #   enable = true; # Enables wpa_supplicant
+    #   userControlled.enable = true;
+    # };
+
+  };
+
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
   # still possible to use this option, but it's recommended to use it in conjunction

@@ -52,7 +52,7 @@
             HostName 10.0.0.40
 
           Host pn53
-            HostName 10.0.0.93
+            HostName 10.0.0.218
 
           Host sg
             User root
