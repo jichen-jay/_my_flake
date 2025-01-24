@@ -23,16 +23,8 @@ let
   ];
 
   desktopPackages = with pkgs; [
-    google-chrome
-    telegram-desktop
-    font-manager
-    xfce.xfce4-screenshooter
-    xfce.xfce4-clipman-plugin
-    zoom-us
     xclip
     gnome-keyring
-    jetbrains-mono
-    xdg-utils
   ];
 
 in

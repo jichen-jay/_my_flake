@@ -7,6 +7,20 @@
     # wireshark
 
     (pkgs.stdenv.mkDerivation {
+      pname = "texter";
+      version = "0.1.1";
+      src = pkgs.fetchurl {
+        url = "https://github.com/jichen-jay/texter/releases/download/main/texter";
+        sha256 = "0qvs1xwn3p40p1n51vv87i3v3ppdx9gdf34n7cii4zyypgqsmngn"; 
+      };
+      dontUnpack = true;
+      installPhase = ''
+        mkdir -p $out/bin
+        cp $src $out/bin/texter
+        chmod +x $out/bin/texter
+      '';
+    })
+    (pkgs.stdenv.mkDerivation {
       pname = "wash-cli";
       version = "0.37.0";
       src = pkgs.fetchurl {

@@ -124,7 +124,14 @@
       zstyle ':fzf-tab:*' continuous-trigger 'tab'
 
       bindkey "^[[1;3C" forward-word
-      bindkey "^[[1;3D" backward-word
+      bindkey '^[[1;3D' backward-word               # Alt + Left
+      bindkey '^[[1;5C' forward-word                # Ctrl + Right
+      bindkey '^[[1;5D' backward-word               # Ctrl + Left
+      
+      # Enable autosuggestion navigation
+      ZSH_AUTOSUGGEST_ACCEPT_WIDGETS+=(forward-word backward-word)
+      ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word)
+
       zle_highlight=(paste:none)
     '';
 

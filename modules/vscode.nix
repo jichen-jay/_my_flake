@@ -5,7 +5,6 @@
 }:
 {
   environment.systemPackages = with pkgs; [
-    nil
     vscode.fhs
     nixfmt-rfc-style
     piper

@@ -31,27 +31,30 @@
     xfce.xfce4-power-manager
     xfce.xfce4-notifyd
     xfce.xfce4-genmon-plugin
+    xfce.xfce4-screenshooter
     xfce.xfce4-settings
+    telegram-desktop
+    font-manager
+    zoom-us
+    jetbrains-mono
+    xdg-utils
     gsettings-desktop-schemas
     glib
     google-chrome
     chromium
     nyxt
-
     (writeScriptBin "theme-switch" ''
-      #!${pkgs.bash}/bin/bash
-      mkdir -p ~/.local/share/xfce4/terminal/colorschemes
-
+      #!${pkgs.zsh}/bin/zsh
       case "$1" in
         "dark")
-          gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
           xfconf-query -c xsettings -p /Net/ThemeName -s "Adwaita-dark"
+          xfconf-query -c xsettings -p /Net/IconThemeName -s "Papirus-Dark"
+          gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
           ;;
         "light")
-          gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
           xfconf-query -c xsettings -p /Net/ThemeName -s "Adwaita"
-          ;;
-        *)
+          xfconf-query -c xsettings -p /Net/IconThemeName -s "Papirus"
+          gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
           ;;
       esac
     '')
@@ -70,18 +73,26 @@
     firefox.enable = true;
   };
 
-  services.xserver.enable = true;
-  services.xserver.desktopManager.xfce = {
-    enable = true;
-    noDesktop = false;
-    enableXfwm = true;
-    enableScreensaver = false;
+  services = {
+    gvfs.enable = true;
   };
 
-  # Display manager configuration
-  services.displayManager.autoLogin = {
+  services.displayManager = {
+    defaultSession = "xfce";
+    autoLogin = {
+      enable = true;
+      user = "jaykchen";
+    };
+  };
+
+  services.xserver = {
     enable = true;
-    user = "jaykchen";
+    desktopManager.xfce = {
+      enable = true;
+      noDesktop = false;
+      enableXfwm = true;
+      enableScreensaver = false;
+    };
   };
 
   services.ratbagd.enable = true;
@@ -95,24 +106,92 @@
       };
     };
 
-    xdg.configFile = {
-      "xfce4/xfconf/xfce-perchannel-xml/xfce4-screenshooter.xml".source =
-        ./xfce-xml/xfce4-screenshooter.xml;
-      "xfce4/xfconf/xfce-perchannel-xml/xfce4-clipman.xml".source = ./xfce-xml/xfce4-clipman.xml;
-      "xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml".source =
-        ./xfce-xml/xfce4-keyboard-shortcuts.xml;
+    # xfconf.settings = {
+    #   "xfce4-screenshooter" = {
+    #     "/actions/show_in_folder" = false;
+    #     "/actions/show_mouse" = true;
+    #     "/actions/take_window_shot" = false;
+    #     "/app/last_user" = "";
+    #     "/default/delay" = 0;
+    #     "/default/region" = 3;
+    #     "/default/action" = 1;
+    #     "/default/show_mouse" = true;
+    #     "/default/title" = true;
+    #   };
 
-      "xfce4/terminal/terminalrc".text = ''
-        [Configuration]
-        ColorForeground=#dcdcdc
-        ColorBackground=#2c2c2c
-        ColorCursor=#dcdcdc
-        ColorPalette=#000000;#cc0000;#4e9a06;#c4a000;#3465a4;#75507b;#06989a;#d3d7cf;#555753;#ef2929;#8ae234;#fce94f;#729fcf;#ad7fa8;#34e2e2;#eeeeec
-        ColorScheme=dark
-        ThemeDark=true
+    #   "xfce4-power-manager" = {
+    #     "/xfce4-power-manager/show-tray-icon" = false;
+    #     "/xfce4-power-manager/power-button-action" = 4;
+    #     "/xfce4-power-manager/lock-screen-suspend-hibernate" = false;
+    #     "/xfce4-power-manager/dpms-on-ac-off" = 32;
+    #     "/xfce4-power-manager/dpms-on-ac-sleep" = 31;
+    #     "/xfce4-power-manager/blank-on-ac" = 17;
+    #     "/xfce4-power-manager/sleep-button-action" = 3;
+    #     "/xfce4-power-manager/hibernate-button-action" = 3;
+    #     "/xfce4-power-manager/battery-button-action" = 3;
+    #   };
+
+    #   "xfce4-session" = {
+    #     "/general/PromptOnLogout" = false;
+    #     "/shutdown/LockScreen" = false;
+    #     "/chooser/AlwaysDisplay" = false;
+    #   };
+
+    #   "pointers" = {
+    #     "/Logitech_G604_/RightHanded" = true;
+    #     "/Logitech_G604_/ReverseScrolling" = true;
+    #     "/Logitech_G604_/Threshold" = 1;
+    #     "/Logitech_G604_/Acceleration" = 5.0;
+    #   };
+
+    #   "xfce4-clipman" = {
+    #     "/settings/add-primary-clipboard" = true;
+    #   };
+    #   "xfce4-terminal" = {
+    #     "/Configuration/ColorForeground" = "#dcdcdc";
+    #     "/Configuration/ColorBackground" = "#2c2c2c";
+    #     "/Configuration/ColorCursor" = "#dcdcdc";
+    #     "/Configuration/ColorPalette" = [
+    #       "#000000"
+    #       "#cc0000"
+    #       "#4e9a06"
+    #       "#c4a000"
+    #       "#3465a4"
+    #       "#75507b"
+    #       "#06989a"
+    #       "#d3d7cf"
+    #       "#555753"
+    #       "#ef2929"
+    #       "#8ae234"
+    #       "#fce94f"
+    #       "#729fcf"
+    #       "#ad7fa8"
+    #       "#34e2e2"
+    #       "#eeeeec"
+    #     ];
+    #     "/Configuration/ColorScheme" = "dark";
+    #     "/Configuration/ThemeDark" = true;
+    #   };
+    # };
+
+    xdg.configFile = {
+      "autostart/xfce4-clipman-plugin-autostart.desktop".text = ''
+        [Desktop Entry]
+        Hidden=false
+        TryExec=xfce4-clipman
+        Exec=xfce4-clipman
+      '';
+    };
+    xsession = {
+      enable = true;
+      initExtra = ''
+        xfconf-query -c xsettings -p /Net/ThemeName -s "Adwaita-dark"
       '';
     };
 
+    home.sessionVariables = {
+      DBUS_SESSION_BUS_ADDRESS = "unix:path=/run/user/1001/bus";
+    };
   };
 
   system.activationScripts.chromeProfile = {
@@ -145,11 +224,6 @@
     '';
     deps = [ ];
   };
-
-  # Ensure Chrome data directory persists across rebuilds
-  # environment.persistence."/nix/persist".directories = [
-  #   "/home/jaykchen/.config/google-chrome"
-  # ];
 
   # Printing
   services.printing.enable = true;
