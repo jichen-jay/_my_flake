@@ -105,83 +105,106 @@
         color-scheme = "prefer-dark";
       };
     };
-
-    # xfconf.settings = {
-    #   "xfce4-screenshooter" = {
-    #     "/actions/show_in_folder" = false;
-    #     "/actions/show_mouse" = true;
-    #     "/actions/take_window_shot" = false;
-    #     "/app/last_user" = "";
-    #     "/default/delay" = 0;
-    #     "/default/region" = 3;
-    #     "/default/action" = 1;
-    #     "/default/show_mouse" = true;
-    #     "/default/title" = true;
-    #   };
-
-    #   "xfce4-power-manager" = {
-    #     "/xfce4-power-manager/show-tray-icon" = false;
-    #     "/xfce4-power-manager/power-button-action" = 4;
-    #     "/xfce4-power-manager/lock-screen-suspend-hibernate" = false;
-    #     "/xfce4-power-manager/dpms-on-ac-off" = 32;
-    #     "/xfce4-power-manager/dpms-on-ac-sleep" = 31;
-    #     "/xfce4-power-manager/blank-on-ac" = 17;
-    #     "/xfce4-power-manager/sleep-button-action" = 3;
-    #     "/xfce4-power-manager/hibernate-button-action" = 3;
-    #     "/xfce4-power-manager/battery-button-action" = 3;
-    #   };
-
-    #   "xfce4-session" = {
-    #     "/general/PromptOnLogout" = false;
-    #     "/shutdown/LockScreen" = false;
-    #     "/chooser/AlwaysDisplay" = false;
-    #   };
-
-    #   "pointers" = {
-    #     "/Logitech_G604_/RightHanded" = true;
-    #     "/Logitech_G604_/ReverseScrolling" = true;
-    #     "/Logitech_G604_/Threshold" = 1;
-    #     "/Logitech_G604_/Acceleration" = 5.0;
-    #   };
-
-    #   "xfce4-clipman" = {
-    #     "/settings/add-primary-clipboard" = true;
-    #   };
-    #   "xfce4-terminal" = {
-    #     "/Configuration/ColorForeground" = "#dcdcdc";
-    #     "/Configuration/ColorBackground" = "#2c2c2c";
-    #     "/Configuration/ColorCursor" = "#dcdcdc";
-    #     "/Configuration/ColorPalette" = [
-    #       "#000000"
-    #       "#cc0000"
-    #       "#4e9a06"
-    #       "#c4a000"
-    #       "#3465a4"
-    #       "#75507b"
-    #       "#06989a"
-    #       "#d3d7cf"
-    #       "#555753"
-    #       "#ef2929"
-    #       "#8ae234"
-    #       "#fce94f"
-    #       "#729fcf"
-    #       "#ad7fa8"
-    #       "#34e2e2"
-    #       "#eeeeec"
-    #     ];
-    #     "/Configuration/ColorScheme" = "dark";
-    #     "/Configuration/ThemeDark" = true;
-    #   };
-    # };
-
     xdg.configFile = {
+      # Clipman autostart
       "autostart/xfce4-clipman-plugin-autostart.desktop".text = ''
         [Desktop Entry]
         Hidden=false
         TryExec=xfce4-clipman
         Exec=xfce4-clipman
       '';
+
+      # Screenshooter settings
+      "xfce4/xfconf/xfce-perchannel-xml/xfce4-screenshooter.xml".text = ''
+        <?xml version="1.0" encoding="UTF-8"?>
+        <channel name="xfce4-screenshooter" version="1.0">
+          <property name="actions" type="empty">
+            <property name="show_in_folder" type="bool" value="false"/>
+            <property name="show_mouse" type="bool" value="true"/>
+            <property name="take_window_shot" type="bool" value="false"/>
+          </property>
+          <property name="app" type="empty">
+            <property name="last_user" type="string" value=""/>
+          </property>
+          <property name="default" type="empty">
+            <property name="delay" type="int" value="0"/>
+            <property name="region" type="int" value="3"/>
+            <property name="action" type="int" value="1"/>
+            <property name="show_mouse" type="bool" value="true"/>
+            <property name="title" type="bool" value="true"/>
+          </property>
+        </channel>
+      '';
+
+      # Power manager settings
+      "xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml".text = ''
+        <?xml version="1.0" encoding="UTF-8"?>
+        <channel name="xfce4-power-manager" version="1.0">
+          <property name="xfce4-power-manager" type="empty">
+            <property name="show-tray-icon" type="bool" value="false"/>
+            <property name="power-button-action" type="uint" value="4"/>
+            <property name="lock-screen-suspend-hibernate" type="bool" value="false"/>
+            <property name="dpms-on-ac-off" type="uint" value="32"/>
+            <property name="dpms-on-ac-sleep" type="uint" value="31"/>
+            <property name="blank-on-ac" type="int" value="17"/>
+            <property name="sleep-button-action" type="uint" value="3"/>
+            <property name="hibernate-button-action" type="uint" value="3"/>
+            <property name="battery-button-action" type="uint" value="3"/>
+          </property>
+        </channel>
+      '';
+
+      # Session settings
+      "xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml".text = ''
+        <?xml version="1.0" encoding="UTF-8"?>
+        <channel name="xfce4-session" version="1.0">
+          <property name="general" type="empty">
+            <property name="PromptOnLogout" type="bool" value="false"/>
+          </property>
+          <property name="shutdown" type="empty">
+            <property name="LockScreen" type="bool" value="false"/>
+          </property>
+          <property name="chooser" type="empty">
+            <property name="AlwaysDisplay" type="bool" value="false"/>
+          </property>
+        </channel>
+      '';
+
+      # Pointer settings
+      "xfce4/xfconf/xfce-perchannel-xml/pointers.xml".text = ''
+        <?xml version="1.0" encoding="UTF-8"?>
+        <channel name="pointers" version="1.0">
+          <property name="Logitech_G604_" type="empty">
+            <property name="RightHanded" type="bool" value="true"/>
+            <property name="ReverseScrolling" type="bool" value="true"/>
+            <property name="Threshold" type="int" value="1"/>
+            <property name="Acceleration" type="double" value="5.0"/>
+          </property>
+        </channel>
+      '';
+
+      # Clipman settings
+      "xfce4/xfconf/xfce-perchannel-xml/xfce4-clipman.xml".text = ''
+        <?xml version="1.0" encoding="UTF-8"?>
+        <channel name="xfce4-clipman" version="1.0">
+          <property name="settings" type="empty">
+            <property name="add-primary-clipboard" type="bool" value="true"/>
+          </property>
+        </channel>
+      '';
+
+      # Terminal settings
+      "xfce4/terminal/terminalrc".text = ''
+        [Configuration]
+        ColorForeground=#dcdcdc
+        ColorBackground=#2c2c2c
+        ColorCursor=#dcdcdc
+        ColorPalette=#000000;#cc0000;#4e9a06;#c4a000;#3465a4;#75507b;#06989a;#d3d7cf;#555753;#ef2929;#8ae234;#fce94f;#729fcf;#ad7fa8;#34e2e2;#eeeeec
+        ColorScheme=dark
+        ThemeDark=true
+      '';
     };
+
     xsession = {
       enable = true;
       initExtra = ''
