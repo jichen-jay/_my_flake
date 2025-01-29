@@ -7,11 +7,42 @@
 {
   nixpkgs.config.allowUnfree = true;
 
+  nixpkgs.config = {
+    stdenv = {
+      cc = "gcc";
+      ccFlags = "-march=native -O3";
+    };
+  };
+
   environment.pathsToLink = [ "/share/zsh" ];
   environment = {
     shells = with pkgs; [ zsh ];
 
     systemPackages = with pkgs; [
+      (ripgrep.override {
+        stdenv = pkgs.stdenv // {
+          mkDerivation =
+            args:
+            pkgs.stdenv.mkDerivation (
+              args
+              // {
+                NIX_CFLAGS_COMPILE = toString (args.NIX_CFLAGS_COMPILE or "") + " -march=native -O3";
+              }
+            );
+        };
+      })
+      (zsh.override {
+        stdenv = pkgs.stdenv // {
+          mkDerivation =
+            args:
+            pkgs.stdenv.mkDerivation (
+              args
+              // {
+                NIX_CFLAGS_COMPILE = "${toString (args.NIX_CFLAGS_COMPILE or "")} -march=native -O3";
+              }
+            );
+        };
+      })
       pass
       gnupg
       pinentry
@@ -23,7 +54,6 @@
       curl
       fzf
       starship
-      zsh
       zsh-syntax-highlighting
       zsh-fzf-history-search
       zsh-completions
@@ -31,7 +61,6 @@
       lunarvim
       nil
       nixpkgs-fmt
-      ripgrep
       bat
       jq
       file
@@ -127,7 +156,7 @@
       bindkey '^[[1;3D' backward-word               # Alt + Left
       bindkey '^[[1;5C' forward-word                # Ctrl + Right
       bindkey '^[[1;5D' backward-word               # Ctrl + Left
-      
+
       # Enable autosuggestion navigation
       ZSH_AUTOSUGGEST_ACCEPT_WIDGETS+=(forward-word backward-word)
       ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word)

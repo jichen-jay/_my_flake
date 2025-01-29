@@ -135,7 +135,26 @@
           isDesktop = true;
           useHomeManager = true; # Desktop: includes Home Manager and VSCode Server
           useVSCodeServer = true;
-          extraModules = [ ./modules/hardware-configuration-nr200.nix ];
+          extraModules = [
+            ./modules/hardware-configuration-nr200.nix
+            {
+              nixpkgs.config = {
+                stdenv = {
+                  cc = "gcc"; # Use GCC as the compiler
+                  ccFlags = "-march=znver3 -O2"; # Zen 3-specific optimizations
+                };
+                allowUnfree = true;
+              };
+
+              nixpkgs.overlays = [
+                (self: super: {
+                  stdenv = super.stdenv // {
+                    ccFlags = "-march=znver3 -O2"; # Zen 3-specific compiler flags
+                  };
+                })
+              ];
+            }
+          ];
         };
 
         md16 = mkHost {

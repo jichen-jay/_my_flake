@@ -106,6 +106,9 @@
       };
     };
     xdg.configFile = {
+      "xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml".source =
+        ./xfce-xml/xfce4-keyboard-shortcuts.xml;
+
       # Clipman autostart
       "autostart/xfce4-clipman-plugin-autostart.desktop".text = ''
         [Desktop Entry]

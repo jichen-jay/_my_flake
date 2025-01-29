@@ -1,11 +1,3 @@
-sudo nixos-rebuild switch --flake .#nixos
-
-
-//need to use env to compile:
-export NIXPKGS_ALLOW_UNFREE=1
-sudo -E nixos-rebuild switch --flake .#pn53 --impure
-
-
 //Create the directory structure with proper ownership:
 sudo mkdir -p /run/jaykchen/1000/containers
 sudo chown -R jaykchen:users /run/jaykchen/1000
@@ -119,3 +111,6 @@ nix build .#nixosConfigurations.pn53.config.system.build.toplevel --store 'ssh:/
 NIX_SSHOPTS="-i /home/jaykchen/.ssh/nixos_ed25519 -o StrictHostKeyChecking=accept-new" \
   nix build ".#nixosConfigurations.pn53.config.system.build.toplevel" \
   --store "ssh-ng://root@10.0.0.93?remote-store=local?root=/"
+
+
+sudo nixos-rebuild switch  --flake .#nr200 --option system-features gccarch-znver3

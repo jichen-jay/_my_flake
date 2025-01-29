@@ -16,9 +16,6 @@ let
     binutils
     grpcurl
     podman
-  ];
-
-  utilityPackages = with pkgs; [
     eza
   ];
 
@@ -41,7 +38,6 @@ in
       libsecret
     ]
     ++ devPackages
-    ++ utilityPackages
     ++ (lib.optionals isDesktop desktopPackages);
 
   programs = {
