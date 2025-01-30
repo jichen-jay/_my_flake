@@ -17,7 +17,7 @@
   };
 
   home-manager.users.jaykchen =
-    { config, ... }:
+    { config, pkgs, ... }:
     {
       xdg.enable = true;
 
@@ -105,6 +105,9 @@
           "rust-analyzer.inlayHints.lifetimeElisionHints.enable" = "never";
           "rust-analyzer.check.features" = "all";
           "rust-analyzer.procMacro.enable" = true;
+          "terminal.integrated.rendererType" = "dom";
+          "terminal.integrated.shell.linux" = "${pkgs.zsh}/bin/zsh";
+          "terminal.integrated.sendKeybindingsToShell" = true;
           "telemetry.telemetryLevel" = "off";
           "remote.SSH.showLoginTerminal" = true;
           "remote.SSH.useLocalServer" = false;
@@ -158,8 +161,17 @@
             key = "shift+escape";
             command = "openInIntegratedTerminal";
           }
+          {
+            key = "alt+left";
+            command = "cursorWordStartLeftSelect";
+            when = "editorTextFocus";
+          }
+          {
+            key = "alt+right";
+            command = "cursorWordEndRightSelect";
+            when = "editorTextFocus";
+          }
         ];
       };
-
     };
 }

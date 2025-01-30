@@ -65,6 +65,7 @@
       jq
       file
       tokei
+      gcc-unwrapped
     ];
 
     shellAliases = {
