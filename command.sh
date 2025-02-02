@@ -100,6 +100,13 @@ sudo NIX_SSHOPTS="-i /home/jaykchen/.ssh/nixos_ed25519" \
   --build-host jaykchen@10.0.0.93 \
   --flake .#pn53
 
+sudo NIX_SSHOPTS="-i /home/jaykchen/.ssh/pn53_id_rsa" \
+  nixos-rebuild switch \
+  --use-remote-sudo \
+  --target-host jaykchen@10.0.0.40 \
+  --build-host jaykchen@10.0.0.40 \
+  --flake .#md16
+
 
 nix build .#nixosConfigurations.jaykchen.config.system.build.toplevel \
   --store 'ssh://jaykchen@10.0.0.93?remote-store=local?root=/' --flake .#pn53

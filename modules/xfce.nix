@@ -41,6 +41,7 @@
     gsettings-desktop-schemas
     glib
     google-chrome
+    appimage-run
     chromium
     nyxt
     (writeScriptBin "theme-switch" ''
@@ -262,6 +263,8 @@
     alsa.support32Bit = true;
     pulse.enable = true;
   };
+
+  services.dbus.enable = true;
 
   # Gnome Keyring
   services.dbus.packages = [ pkgs.seahorse ];

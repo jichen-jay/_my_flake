@@ -9,7 +9,7 @@
     nixfmt-rfc-style
     piper
     libratbag
-    jetbrains.rust-rover
+    # jetbrains.rust-rover
   ];
 
   services.vscode-server = {

@@ -26,7 +26,7 @@
         ./modules/users.nix
         ./modules/base.nix
         ./modules/ssh.nix
-        ./modules/podman.nix
+        # ./modules/podman.nix
       ];
 
       desktopModules = [
@@ -34,9 +34,9 @@
         ./modules/printer.nix
         ./modules/font.nix
         ./modules/net-tools.nix
-        ./modules/access-shared-drive.nix
+        # ./modules/access-shared-drive.nix
         ./modules/vscode.nix
-        ./modules/wasmcloud.nix
+        # ./modules/wasmcloud.nix
         {
           services.xserver = {
             enable = true;
