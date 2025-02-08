@@ -23,9 +23,8 @@
     lxqt.lxqt-policykit
     lxqt.lximage-qt
     pcmanfm-qt
-    qterminal
-    qps
-    screengrab
+    alacritty
+    btop
     gvfs
     dbus-glib
     telegram-desktop
@@ -59,15 +58,24 @@
 
   system.activationScripts.lxqtConfig = {
     text = ''
-      # Ensure clean state for LXQt configuration
-      rm -rf /home/jaykchen/.config/lxqt
+      CONFIG_DIR="/home/jaykchen/.config/lxqt"
+      SYSTEM_CONFIG_DIR="/run/current-system/sw/share/lxqt"
 
-      # Create symlink for persisted config if needed (optional)
-      ln -s /etc/xdg/lxqt /home/jaykchen/.config/lxqt
+      # Ensure the target directory exists
+      if [ ! -d "$SYSTEM_CONFIG_DIR" ]; then
+        echo "Error: Target directory $SYSTEM_CONFIG_DIR does not exist."
+        exit 1
+      fi
 
-      # Adjust permissions for the configuration directory
-      chown -R jaykchen:users /home/jaykchen/.config/lxqt
-      chmod -R 755 /home/jaykchen/.config/lxqt
+      # Remove existing symlink or directory
+      if [ -L "$CONFIG_DIR" ]; then
+        rm "$CONFIG_DIR"
+      elif [ -d "$CONFIG_DIR" ]; then
+        rm -rf "$CONFIG_DIR"
+      fi
+
+      # Create symlink to system configuration directory
+      ln -s "$SYSTEM_CONFIG_DIR" "$CONFIG_DIR"
     '';
   };
 

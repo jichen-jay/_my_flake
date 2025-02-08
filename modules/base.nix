@@ -133,7 +133,9 @@
 
     promptInit = ''
       # Initialize starship prompt for zsh users
-      eval "$(starship init zsh)"
+      # eval "$(starship init zsh)"
+
+     eval "$(/run/current-system/sw/bin/starship init zsh)" 
     '';
   };
 
