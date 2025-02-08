@@ -64,7 +64,6 @@
   };
 
   # 4. DBus + dconf services are often required by GTK apps:
-  services.dbus.enable = true;
   programs.dconf.enable = true;
 
   programs.nix-ld.enable = true;

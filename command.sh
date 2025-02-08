@@ -41,6 +41,15 @@ systemctl --user daemon-reload
 rm -rf ~/.config/pulse/
 rm -rf ~/.pulse*
 
+
+sudo umount /home/jaykchen/.config/
+sudo umount /home/jaykchen/.config/google-chrome
+sudo umount /home/jaykchen/.config/Postman
+
+rm -rf ~/.config
+
+
+
 sudo rm -rf ~/.config/git
 sudo rm -rf ~/.config/systemd
 sudo rm -rf ~/.config/environment.d
@@ -132,3 +141,16 @@ NIX_SSHOPTS="-i /home/jaykchen/.ssh/nixos_ed25519 -o StrictHostKeyChecking=accep
 
 
 sudo nixos-rebuild switch  --flake .#nr200 --option system-features gccarch-znver3
+
+
+➜ journalctl -b -1 | grep -E "panic|oops|fatal|error"
+Feb 08 11:15:00 nr200 mount[5406]: mount: /nix/store/ggzlqjb390v22ryclzjh267pn7hwpr6h-bash_profile: wrong fs type, bad option, bad superblock on /nix/persist/home/jaykchen/.bash_profile, missing codepage or helper program, or other error.
+Feb 08 11:15:00 nr200 pipewire[1818]: mod.x11-bell: X11 I/O error handler called on display :0
+Feb 08 11:15:00 nr200 pipewire[1818]: mod.x11-bell: X11 display (:0) has encountered a fatal I/O error
+
+
+xfce4-panel --quit
+pkill xfconfd
+rm -rf ~/.config/xfce4/panel ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
+xfce4-panel
+

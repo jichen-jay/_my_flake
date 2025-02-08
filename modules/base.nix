@@ -5,15 +5,9 @@
   ...
 }:
 {
-  nixpkgs.config.allowUnfree = true;
-
   nixpkgs.config = {
-    stdenv = {
-      cc = "gcc";
-      ccFlags = "-march=native -O3";
-    };
+    allowUnfree = true;
   };
-
   environment.pathsToLink = [ "/share/zsh" ];
   environment = {
     shells = with pkgs; [ zsh ];
@@ -53,7 +47,6 @@
       wget
       curl
       fzf
-      starship
       zsh-syntax-highlighting
       zsh-fzf-history-search
       zsh-completions
@@ -139,7 +132,7 @@
 
     interactiveShellInit = ''
       eval "$(direnv hook zsh)"
-
+      export PATH="/run/current-system/sw/bin:$PATH"
       # FZF configuration
       export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --info=inline"
       export FZF_CTRL_R_OPTS="--sort --exact"
@@ -166,7 +159,8 @@
     '';
 
     promptInit = ''
-      eval "$(${pkgs.starship}/bin/starship init zsh)"
+      # eval "$(${pkgs.starship}/bin/starship init zsh)"
+      eval "$(starship init zsh)"
       autoload -U promptinit
       promptinit
     '';
