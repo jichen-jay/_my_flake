@@ -28,7 +28,7 @@
       ];
 
       desktopModules = [
-        ./modules/lxqt.nix
+        ./modules/IceWM.nix
         # ./modules/xfce.nix
         ./modules/printer.nix
         ./modules/font.nix
