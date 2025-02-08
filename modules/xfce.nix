@@ -85,6 +85,7 @@
       };
     };
     xserver = {
+      updateDbusEnvironment = true;
       enable = true;
       desktopManager.xfce = {
         enable = true;
@@ -157,23 +158,30 @@
     '';
   };
 
+  services.xserver.displayManager.sessionCommands = ''
+    # Ensure the symlink exists
+    rm -rf ~/.config/xfce4
+    ln -s /etc/xdg/xfce4 ~/.config/xfce4
+    sleep 2
+    systemctl --user import-environment DISPLAY DBUS_SESSION_BUS_ADDRESS
+  '';
+
   system.activationScripts.xfceConfig = {
     text = ''
-      # Remove any existing xfce4 config (file, directory, or symlink)
+      # Ensure clean state
       rm -rf /home/jaykchen/.config/xfce4
 
-      # Create symlink so that xfce4 config points to the system-wide configuration
+      # Create symlink for persisted config
       ln -s /etc/xdg/xfce4 /home/jaykchen/.config/xfce4
 
-      # Create autostart directory and link the XFCE clipman autostart file
+      # Set up autostart directory
       mkdir -p /home/jaykchen/.config/autostart
       ln -sf /etc/xdg/autostart/xfce4-clipman-plugin-autostart.desktop /home/jaykchen/.config/autostart/
 
-      # Optionally, adjust permissions on the autostart directory (or other files if needed)
-      chown -R jaykchen:users /home/jaykchen/.config/autostart
-      chmod -R 755 /home/jaykchen/.config/autostart
+      # Adjust permissions
+      chown -R jaykchen:users /home/jaykchen/.config
+      chmod -R 755 /home/jaykchen/.config
     '';
-    deps = [ ];
   };
 
   # Rest of the services remain unchanged
@@ -190,6 +198,63 @@
       #   mode = "0700";
       # }
     ];
+  };
+
+  system.activationScripts.postmanConfig = {
+    text = ''
+      BACKUP_DIR="/home/jaykchen/postman-backup"
+      POSTMAN_DIR="/home/jaykchen/.config/Postman"
+
+      # Only proceed if backup exists
+      if [ -d "$BACKUP_DIR" ]; then
+        # Ensure Postman configuration directory exists
+        mkdir -p "$POSTMAN_DIR"
+
+        # Copy configuration data with error checking
+        if ! cp -pr "$BACKUP_DIR/." "$POSTMAN_DIR/"; then
+          echo "Failed to copy Postman configuration"
+          exit 1
+        fi
+
+        # Fix permissions
+        chown -R jaykchen:users "$POSTMAN_DIR"
+        chmod -R 700 "$POSTMAN_DIR"
+      else
+        echo "Postman backup not found - skipping configuration restoration"
+      fi
+    '';
+    deps = [ ];
+  };
+
+  system.activationScripts.chromeProfile = {
+    text = ''
+      BACKUP_DIR="/home/jaykchen/chrome-backup"
+      CHROME_DIR="/home/jaykchen/.config/google-chrome"
+
+      # Only proceed if backup exists
+      if [ -d "$BACKUP_DIR" ] && [ -f "$BACKUP_DIR/Local State" ] && [ -d "$BACKUP_DIR/Default" ]; then
+        # Ensure chrome directory exists
+        mkdir -p "$CHROME_DIR"
+
+        # Copy profile data with error checking
+        if ! cp -p "$BACKUP_DIR/Local State" "$CHROME_DIR/"; then
+          echo "Failed to copy Local State"
+          exit 1
+        fi
+
+        if ! cp -pr "$BACKUP_DIR/Default" "$CHROME_DIR/"; then
+          echo "Failed to copy Default directory"
+          exit 1
+        fi
+
+        # Fix permissions
+        chown -R jaykchen:users "$CHROME_DIR"
+        chmod -R 700 "$CHROME_DIR"
+      else
+        echo "Chrome backup not found or incomplete - skipping profile restoration"
+      fi
+    '';
+    deps = [ ];
   };
 
   services.printing.enable = true;
@@ -216,6 +281,8 @@
     enable = true;
     packages = [ pkgs.seahorse ];
   };
+
+  # services.xserver.updateDbusEnvironment = true;
 
   security.pam.services = {
     login.enableGnomeKeyring = true;

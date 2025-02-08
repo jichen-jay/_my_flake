@@ -28,14 +28,15 @@
       ];
 
       desktopModules = [
-        ./modules/xfce.nix
+        ./modules/lxqt.nix
+        # ./modules/xfce.nix
         ./modules/printer.nix
         ./modules/font.nix
         ./modules/net-tools.nix
         # ./modules/desktop-entry.nix
         # ./modules/access-shared-drive.nix
         ./modules/vscode.nix
-        # ./modules/wasmcloud.nix
+        ./modules/wasmcloud.nix
         {
           services.xserver = {
             enable = true;

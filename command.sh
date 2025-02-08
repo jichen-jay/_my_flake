@@ -154,3 +154,7 @@ pkill xfconfd
 rm -rf ~/.config/xfce4/panel ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
 xfce4-panel
 
+mv ~/.cache/sessions
+
+chown root:root /run/current-system/sw/bin/sudo
+chmod 4755 /run/current-system/sw/bin/sudo

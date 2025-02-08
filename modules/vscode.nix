@@ -139,8 +139,16 @@
   # #change# Ensure VSCode config directory exists
   system.activationScripts.vscodeDirs = ''
     mkdir -p /home/jaykchen/.config/Code/User
-    ln -sf /etc/vscode/user/settings.json /home/jaykchen/.config/Code/User/settings.json
-    ln -sf /etc/vscode/user/keybindings.json /home/jaykchen/.config/Code/User/keybindings.json
+
+    # Only link if the settings file doesn’t already exist
+    if [ ! -f /home/jaykchen/.config/Code/User/settings.json ]; then
+      ln -sf /etc/vscode/user/settings.json /home/jaykchen/.config/Code/User/settings.json
+    fi
+
+    if [ ! -f /home/jaykchen/.config/Code/User/keybindings.json ]; then
+      ln -sf /etc/vscode/user/keybindings.json /home/jaykchen/.config/Code/User/keybindings.json
+    fi
+
     chown -R jaykchen:users /home/jaykchen/.config/Code
   '';
 }

@@ -4,11 +4,14 @@
   pkgs,
   ...
 }:
+
 {
   nixpkgs.config = {
     allowUnfree = true;
   };
+
   environment.pathsToLink = [ "/share/zsh" ];
+
   environment = {
     shells = with pkgs; [ zsh ];
 
@@ -59,6 +62,7 @@
       file
       tokei
       gcc-unwrapped
+      pkgs.starship
     ];
 
     shellAliases = {
@@ -68,11 +72,6 @@
       st = "git status";
       lg = "git log";
       gs = "git log -S";
-      dls = "sudo docker image ls";
-      dps = "sudo docker ps -a";
-      dcm = "sudo docker commit";
-      dri = "sudo docker run --rm -it";
-      dpl = "sudo docker pull";
     };
 
     sessionVariables = {
@@ -95,29 +94,17 @@
         "@wheel"
         "jaykchen"
       ];
-      auto-optimise-store = true;
     };
     gc = {
       automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 30d";
     };
   };
 
   system.stateVersion = "24.11";
 
-  programs.tmux = {
-    enable = true;
-    clock24 = true;
-    extraConfig = ''
-      set -g mouse off
-    '';
-    plugins = with pkgs.tmuxPlugins; [
-      yank
-      resurrect
-      continuum
-    ];
-  };
+  security.sudo.enable = true;
+
+  programs.tmux.enable = true;
 
   programs.zsh = {
     enable = true;
@@ -126,43 +113,27 @@
     syntaxHighlighting.enable = true;
 
     shellInit = ''
-      # Base shell initialization
       export LANG=en_US.UTF-8
     '';
 
     interactiveShellInit = ''
       eval "$(direnv hook zsh)"
-      export PATH="/run/current-system/sw/bin:$PATH"
+
       # FZF configuration
       export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --info=inline"
-      export FZF_CTRL_R_OPTS="--sort --exact"
 
-      # Enable fzf keybindings
+      # Enable fzf keybindings and completions
       source ${pkgs.fzf}/share/fzf/key-bindings.zsh
       source ${pkgs.fzf}/share/fzf/completion.zsh
 
-      # fzf-tab configuration
-      zstyle ':fzf-tab:*' fzf-command fzf
-      zstyle ':fzf-tab:*' fzf-flags '--height=40% --layout=reverse --border --info=inline'
-      zstyle ':fzf-tab:*' continuous-trigger 'tab'
-
-      bindkey "^[[1;3C" forward-word
-      bindkey '^[[1;3D' backward-word               # Alt + Left
-      bindkey '^[[1;5C' forward-word                # Ctrl + Right
-      bindkey '^[[1;5D' backward-word               # Ctrl + Left
-
-      # Enable autosuggestion navigation
+      # Autosuggestion navigation setup for zsh-autosuggestions plugin
       ZSH_AUTOSUGGEST_ACCEPT_WIDGETS+=(forward-word backward-word)
-      ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word)
 
-      zle_highlight=(paste:none)
     '';
 
     promptInit = ''
-      # eval "$(${pkgs.starship}/bin/starship init zsh)"
+      # Initialize starship prompt for zsh users
       eval "$(starship init zsh)"
-      autoload -U promptinit
-      promptinit
     '';
   };
 
@@ -188,7 +159,7 @@
         tag_symbol = "🔖 ";
       };
       git_state = {
-        format = "[($state($progress_current of $progress_total))]($style) ";
+        format = "($state($progress_current of $progress_total)) ";
         cherry_pick = "[🍒 PICKING](bold red)";
       };
       git_status = {
@@ -199,7 +170,7 @@
         untracked = "🤷";
         stashed = "📦";
         modified = "📝";
-        staged = "[++($count)](green)";
+        staged = "++($count)";
         renamed = "👅";
         deleted = "🗑";
       };
