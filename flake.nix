@@ -9,6 +9,7 @@
     };
     nixos-vscode-server.url = "github:nix-community/nixos-vscode-server";
     flake-utils.url = "github:numtide/flake-utils";
+    impermanence.url = "github:nix-community/impermanence";
   };
 
   outputs =
@@ -17,12 +18,14 @@
       home-manager,
       nixos-vscode-server,
       flake-utils,
+      impermanence,
       ...
     }:
     let
       pkgsForSystem = system: import nixpkgs { inherit system; };
 
       baseModules = [
+        impermanence.nixosModules.impermanence
         ./modules/users.nix
         ./modules/base.nix
         ./modules/ssh.nix
@@ -34,9 +37,10 @@
         ./modules/printer.nix
         ./modules/font.nix
         ./modules/net-tools.nix
+        ./modules/desktop-entry.nix
         # ./modules/access-shared-drive.nix
         ./modules/vscode.nix
-        # ./modules/wasmcloud.nix
+        ./modules/wasmcloud.nix
         {
           services.xserver = {
             enable = true;

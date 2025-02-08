@@ -221,35 +221,43 @@
     };
   };
 
+  environment.persistence."/nix/persist" = {
+    directories = [
+      "/var/lib/nixos"
+      "/home/jaykchen/.config/google-chrome"
+      "/home/jaykchen/.config/Postman"
+    ];
+  };
+
   system.activationScripts.chromeProfile = {
     text = ''
       BACKUP_DIR="/home/jaykchen/chrome-backup"
       CHROME_DIR="/home/jaykchen/.config/google-chrome"
 
-      # Only proceed if backup exists
-      if [ -d "$BACKUP_DIR" ] && [ -f "$BACKUP_DIR/Local State" ] && [ -d "$BACKUP_DIR/Default" ]; then
-        # Ensure chrome directory exists
+      # Only restore if Chrome directory doesn't exist
+      if [ ! -d "$CHROME_DIR" ] && [ -d "$BACKUP_DIR" ]; then
         mkdir -p "$CHROME_DIR"
-
-        # Copy profile data with error checking
-        if ! cp -p "$BACKUP_DIR/Local State" "$CHROME_DIR/"; then
-          echo "Failed to copy Local State"
-          exit 1
-        fi
-
-        if ! cp -pr "$BACKUP_DIR/Default" "$CHROME_DIR/"; then
-          echo "Failed to copy Default directory"
-          exit 1
-        fi
-
-        # Fix permissions
+        cp -pr "$BACKUP_DIR/"* "$CHROME_DIR/"
         chown -R jaykchen:users "$CHROME_DIR"
         chmod -R 700 "$CHROME_DIR"
-      else
-        echo "Chrome backup not found or incomplete - skipping profile restoration"
       fi
     '';
+
     deps = [ ];
+  };
+
+  system.activationScripts.postmanProfile = {
+    text = ''
+      BACKUP_DIR="/home/jaykchen/postman-backup"
+      POSTMAN_DIR="/home/jaykchen/.config/Postman"
+
+      if [ ! -d "$POSTMAN_DIR" ] && [ -d "$BACKUP_DIR" ]; then
+        mkdir -p "$POSTMAN_DIR"
+        cp -pr "$BACKUP_DIR/"* "$POSTMAN_DIR/"
+        chown -R jaykchen:users "$POSTMAN_DIR"
+        chmod -R 700 "$POSTMAN_DIR"
+      fi
+    '';
   };
 
   # Printing

@@ -78,6 +78,17 @@ cp ~/chrome-backup/'Local State' ~/.config/google-chrome/
 cp -r ~/chrome-backup/Default ~/.config/google-chrome/
 
 
+mkdir -p ~/postman-backup
+
+cp -r ~/.config/Postman/Postman_Config ~/postman-backup/
+cp -r ~/.config/Postman/storage ~/postman-backup/
+cp -r ~/.config/Postman/proxy ~/postman-backup/
+cp -r ~/.config/Postman/Partitions ~/postman-backup/
+
+chmod -R 700 ~/postman-backup
+chown -R jaykchen:users ~/postman-backup
+
+
 //nix on ubuntu
 nix-env -iA nixpkgs.nixos-rebuild
 experimental-features = nix-command flakes
