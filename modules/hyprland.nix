@@ -74,19 +74,72 @@
     XDG_SESSION_TYPE = "wayland";
     QT_QPA_PLATFORM = "wayland";
     CLUTTER_BACKEND = "wayland";
+    XDG_RUNTIME_DIR = "/run/user/$(id -u)";
   };
 
   environment.etc."xdg/kitty/kitty.conf".text = ''
-    # Map Ctrl+Arrow keys to send explicit escape sequences
-    map ctrl+right send_text all \x1b[1;5C
-    map ctrl+left  send_text all \x1b[1;5D
-
-    # Map Alt+Arrow keys to send the desired sequences:
-    # Alt+Right sends ESC followed by 'f'
-    map alt+right send_text all \x1bf
-    # Alt+Left sends ESC followed by 'b'
-    map alt+left  send_text all \x1bb
+    # Map Ctrl+Right Arrow to send the escape for “forward-word”
+    map ctrl+right send_text all "\x1b[1;5C"
+    # Map Ctrl+Left Arrow to send the escape for “backward-word”
+    map ctrl+left send_text all "\x1b[1;5D"
   '';
+
+  system.activationScripts.postmanConfig = {
+    text = ''
+      BACKUP_DIR="/home/jaykchen/postman-backup"
+      POSTMAN_DIR="/home/jaykchen/.config/Postman"
+
+      # Only proceed if backup exists
+      if [ -d "$BACKUP_DIR" ]; then
+        # Ensure Postman configuration directory exists
+        mkdir -p "$POSTMAN_DIR"
+
+        # Copy configuration data with error checking
+        if ! cp -pr "$BACKUP_DIR/." "$POSTMAN_DIR/"; then
+          echo "Failed to copy Postman configuration"
+          exit 1
+        fi
+
+        # Fix permissions
+        chown -R jaykchen:users "$POSTMAN_DIR"
+        chmod -R 700 "$POSTMAN_DIR"
+      else
+        echo "Postman backup not found - skipping configuration restoration"
+      fi
+    '';
+    deps = [ ];
+  };
+
+  system.activationScripts.chromeProfile = {
+    text = ''
+      BACKUP_DIR="/home/jaykchen/chrome-backup"
+      CHROME_DIR="/home/jaykchen/.config/google-chrome"
+
+      # Only proceed if backup exists
+      if [ -d "$BACKUP_DIR" ] && [ -f "$BACKUP_DIR/Local State" ] && [ -d "$BACKUP_DIR/Default" ]; then
+        # Ensure chrome directory exists
+        mkdir -p "$CHROME_DIR"
+
+        # Copy profile data with error checking
+        if ! cp -p "$BACKUP_DIR/Local State" "$CHROME_DIR/"; then
+          echo "Failed to copy Local State"
+          exit 1
+        fi
+
+        if ! cp -pr "$BACKUP_DIR/Default" "$CHROME_DIR/"; then
+          echo "Failed to copy Default directory"
+          exit 1
+        fi
+
+        # Fix permissions
+        chown -R jaykchen:users "$CHROME_DIR"
+        chmod -R 700 "$CHROME_DIR"
+      else
+        echo "Chrome backup not found or incomplete - skipping profile restoration"
+      fi
+    '';
+    deps = [ ];
+  };
 
   # Audio configuration via Pipewire.
   services.pipewire = {

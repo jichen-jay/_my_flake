@@ -163,6 +163,5 @@ grep -R "hm-session-vars.sh" ~/.zshrc ~/.config
 
 rm -rf ~/.config/google-chrome/Default/GPUCache/
 
-google-chrome-stable --ozone-platform=wayland
+google-chrome-stable --disable-gpu --ozone-platform=wayland --crashpad-database=$HOME/.config/google-chrome/Crashpad
 
-google-chrome-stable --disable-gpu

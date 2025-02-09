@@ -128,8 +128,15 @@
       source ${pkgs.fzf}/share/fzf/key-bindings.zsh
       source ${pkgs.fzf}/share/fzf/completion.zsh
 
-      bindkey '^[[1;5C' forward-word
+      # Bind Ctrl+Right Arrow to forward-word
+      # bindkey '^[[1;5C' forward-word
       # Bind Ctrl+Left Arrow to backward-word
+      # bindkey '^[[1;5D' backward-word
+
+      bindkey -r '^[[1;5C'
+      bindkey -r '^[[1;5D'
+
+      bindkey '^[[1;5C' forward-word
       bindkey '^[[1;5D' backward-word
 
       # Autosuggestion navigation setup for zsh-autosuggestions plugin
@@ -137,10 +144,10 @@
     '';
 
     promptInit = ''
-      # Initialize starship prompt for zsh users
-      # eval "$(starship init zsh)"
+       # Initialize starship prompt for zsh users
+       # eval "$(starship init zsh)"
 
-     eval "$(/run/current-system/sw/bin/starship init zsh)" 
+      eval "$(/run/current-system/sw/bin/starship init zsh)" 
     '';
   };
 
