@@ -158,3 +158,11 @@ mv ~/.cache/sessions
 
 chown root:root /run/current-system/sw/bin/sudo
 chmod 4755 /run/current-system/sw/bin/sudo
+
+grep -R "hm-session-vars.sh" ~/.zshrc ~/.config
+
+rm -rf ~/.config/google-chrome/Default/GPUCache/
+
+google-chrome-stable --ozone-platform=wayland
+
+google-chrome-stable --disable-gpu

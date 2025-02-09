@@ -6,9 +6,9 @@
 }:
 
 {
-  nixpkgs.config = {
-    allowUnfree = true;
-  };
+  # nixpkgs.config = {
+  #   allowUnfree = true;
+  # };
 
   environment.pathsToLink = [ "/share/zsh" ];
 
@@ -72,6 +72,8 @@
       st = "git status";
       lg = "git log";
       gs = "git log -S";
+      hs = "hyprshot -m region -m active --clipboard-only";
+      hw = "hyprshot -m window -m active --clipboard-only";
     };
 
     sessionVariables = {
@@ -126,9 +128,12 @@
       source ${pkgs.fzf}/share/fzf/key-bindings.zsh
       source ${pkgs.fzf}/share/fzf/completion.zsh
 
+      bindkey '^[[1;5C' forward-word
+      # Bind Ctrl+Left Arrow to backward-word
+      bindkey '^[[1;5D' backward-word
+
       # Autosuggestion navigation setup for zsh-autosuggestions plugin
       ZSH_AUTOSUGGEST_ACCEPT_WIDGETS+=(forward-word backward-word)
-
     '';
 
     promptInit = ''

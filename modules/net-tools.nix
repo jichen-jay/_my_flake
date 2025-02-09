@@ -10,7 +10,6 @@
     netcat
     socat
     tcpdump
-    postman
     openssl
     # (rustPlatform.buildRustPackage rec {
     #   pname = "quiche";

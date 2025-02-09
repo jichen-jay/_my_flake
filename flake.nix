@@ -25,10 +25,13 @@
         ./modules/base.nix
         ./modules/ssh.nix
         # ./modules/podman.nix
+        {
+          nixpkgs.config.allowUnfree = true;
+        }
       ];
 
       desktopModules = [
-        ./modules/IceWM.nix
+        ./modules/lxqt.nix
         # ./modules/xfce.nix
         ./modules/printer.nix
         ./modules/font.nix
@@ -40,7 +43,7 @@
         {
           services.xserver = {
             enable = true;
-            displayManager.lightdm.enable = true;
+            # displayManager.lightdm.enable = true;
             xkb.layout = "us";
           };
         }
