@@ -31,7 +31,7 @@
       ];
 
       desktopModules = [
-        ./modules/lxqt.nix
+        ./modules/hyprland.nix
         # ./modules/xfce.nix
         ./modules/printer.nix
         ./modules/font.nix
