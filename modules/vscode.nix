@@ -68,7 +68,7 @@
     "rust-analyzer.check.features" = "all";
     "rust-analyzer.procMacro.enable" = true;
     "terminal.integrated.rendererType" = "dom";
-    "terminal.integrated.shell.linux" = "${pkgs.zsh}/bin/zsh";
+    "terminal.integrated.shell.linux" = "${pkgs.fish}/bin/fish";
     "terminal.integrated.sendKeybindingsToShell" = true;
     "telemetry.telemetryLevel" = "off";
     "remote.SSH.showLoginTerminal" = true;

@@ -1,19 +1,15 @@
 {
   config,
-  inputs,
   pkgs,
+  lib,
   ...
 }:
 
 {
-  # nixpkgs.config = {
-  #   allowUnfree = true;
-  # };
-
-  environment.pathsToLink = [ "/share/zsh" ];
+  environment.pathsToLink = [ "/share/fish" ];
 
   environment = {
-    shells = with pkgs; [ zsh ];
+    shells = with pkgs; [ fish ];
 
     systemPackages = with pkgs; [
       (ripgrep.override {
@@ -28,7 +24,7 @@
             );
         };
       })
-      (zsh.override {
+      (fish.override {
         stdenv = pkgs.stdenv // {
           mkDerivation =
             args:
@@ -55,19 +51,11 @@
           url = "https://github.com/stunnel/static-curl/releases/download/8.12.0/curl-linux-x86_64-musl-8.12.0.tar.xz";
           sha256 = "1wj9g4yapyhy4073pg0wxh728smasl7sbapmj79jjq1b1c24j262";
         };
-
-        # Skip the default unpack phase
         dontUnpack = true;
-
         installPhase = ''
-          # Create a temporary directory for unpacking
           mkdir -p tmpdir
           cd tmpdir
-
-          # Unpack the archive
           tar xf $src
-
-          # Create the output directory and copy the binaries
           mkdir -p $out/bin
           cp curl $out/bin/curl
           chmod +x $out/bin/curl
@@ -76,10 +64,9 @@
         '';
       })
       fzf
-      zsh-syntax-highlighting
-      zsh-fzf-history-search
-      zsh-completions
-      zsh-autosuggestions
+      fishPlugins.foreign-env
+      fishPlugins.fzf
+      kitty
       lunarvim
       nil
       nixpkgs-fmt
@@ -104,7 +91,7 @@
 
     sessionVariables = {
       EDITOR = "vim";
-      SHELL = "${pkgs.zsh}/bin/zsh";
+      SHELL = "${pkgs.fish}/bin/fish";
       LANG = "en_US.UTF-8";
     };
   };
@@ -133,49 +120,45 @@
   security.sudo.enable = true;
 
   programs.tmux.enable = true;
-
-  programs.zsh = {
+  programs.fish = {
     enable = true;
-    enableCompletion = true;
-    autosuggestions.enable = true;
-    syntaxHighlighting.enable = true;
+    vendor = {
+      config.enable = true;
+      completions.enable = true;
+      functions.enable = true;
+    };
 
-    shellInit = ''
-      export LANG=en_US.UTF-8
-    '';
+    # Remove the plugins section as it's not a valid option
+    # Instead, install plugins through systemPackages
 
     interactiveShellInit = ''
-      eval "$(direnv hook zsh)"
+      # Set up direnv
+      direnv hook fish | source
 
       # FZF configuration
-      export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --info=inline"
+      set -x FZF_DEFAULT_OPTS "--height 40% --layout=reverse --border --info=inline"
 
-      # Enable fzf keybindings and completions
-      source ${pkgs.fzf}/share/fzf/key-bindings.zsh
-      source ${pkgs.fzf}/share/fzf/completion.zsh
+      # Fish key bindings
+      bind \e\[1\;5C forward-word
+      bind \e\[1\;5D backward-word
 
-      # Bind Ctrl+Right Arrow to forward-word
-      # bindkey '^[[1;5C' forward-word
-      # Bind Ctrl+Left Arrow to backward-word
-      # bindkey '^[[1;5D' backward-word
-
-      bindkey -r '^[[1;5C'
-      bindkey -r '^[[1;5D'
-
-      bindkey '^[[1;5C' forward-word
-      bindkey '^[[1;5D' backward-word
-
-      # Autosuggestion navigation setup for zsh-autosuggestions plugin
-      ZSH_AUTOSUGGEST_ACCEPT_WIDGETS+=(forward-word backward-word)
-    '';
-
-    promptInit = ''
-       # Initialize starship prompt for zsh users
-       # eval "$(starship init zsh)"
-
-      eval "$(/run/current-system/sw/bin/starship init zsh)" 
+      # Initialize starship prompt
+      starship init fish | source
     '';
   };
+
+  environment.etc."xdg/kitty/kitty.conf".text = ''
+    shell ${pkgs.fish}/bin/fish
+    shell_integration enabled
+    font_size 12.0
+    enable_audio_bell no
+    scrollback_lines 10000
+    copy_on_select clipboard
+
+    # Keybindings
+    map ctrl+right send_text all \x1b[1;5C
+    map ctrl+left send_text all \x1b[1;5D
+  '';
 
   programs.starship = {
     enable = true;

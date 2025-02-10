@@ -1,5 +1,5 @@
 {
-  description = "NixOS configuration with flakes, optimized for Zsh, Home Manager, and VSCode Server";
+  description = "NixOS configuration with flakes, optimized for fish, Home Manager, and VSCode Server";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
@@ -81,8 +81,8 @@
                 };
 
                 time.timeZone = "America/Toronto";
-                users.defaultUserShell = pkgs.zsh;
-                users.users.root.shell = pkgs.zsh;
+                users.defaultUserShell = pkgs.fish;
+                users.users.root.shell = pkgs.fish;
 
                 systemd.tmpfiles.rules = [
                   "d /home/jaykchen/.config 0700 jaykchen users"

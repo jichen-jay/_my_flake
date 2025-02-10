@@ -29,7 +29,7 @@
     xdg-utils
     gsettings-desktop-schemas
     glib
-    kitty
+    wireshark
     (google-chrome.override {
       commandLineArgs = [
         "--no-sandbox"
@@ -63,6 +63,11 @@
     };
   };
 
+  programs.wireshark = {
+    enable = true;
+    package = pkgs.wireshark;
+  };
+
   programs.hyprland = {
     enable = true;
     xwayland.enable = true; # Enable XWayland support
@@ -78,13 +83,6 @@
     CLUTTER_BACKEND = "wayland";
     XDG_RUNTIME_DIR = "/run/user/$(id -u)";
   };
-
-  environment.etc."xdg/kitty/kitty.conf".text = ''
-    # Map Ctrl+Right Arrow to send the escape for “forward-word”
-    map ctrl+right send_text all "\x1b[1;5C"
-    # Map Ctrl+Left Arrow to send the escape for “backward-word”
-    map ctrl+left send_text all "\x1b[1;5D"
-  '';
 
   system.activationScripts.postmanConfig = {
     text = ''

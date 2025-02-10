@@ -28,11 +28,12 @@ in
         "docker"
         "storage"
         "users"
+        "wireshark"
       ];
       createHome = true;
       home = "/home/jaykchen";
       group = "users";
-      shell = pkgs.zsh;
+      shell = pkgs.fish;
       linger = true;
       hashedPassword = "$6$xyz$UrgZzIZfEDMHk86dA6yezb9kXPsMxSHYEgXUXKRJbg6Ls.LNON3w27FHjHMRgtGrulLWdlUYfODiumnEOAMD80";
       openssh.authorizedKeys.keys = mySSHKeys;
@@ -53,5 +54,5 @@ in
     };
 
   };
-  programs.zsh.enable = true;
+  programs.fish.enable = true;
 }
