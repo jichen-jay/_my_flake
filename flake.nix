@@ -6,6 +6,7 @@
     nixos-vscode-server.url = "github:nix-community/nixos-vscode-server";
     flake-utils.url = "github:numtide/flake-utils";
     impermanence.url = "github:nix-community/impermanence";
+    niri.url = "github:sodiboo/niri-flake";
   };
 
   outputs =
@@ -14,6 +15,7 @@
       nixos-vscode-server,
       flake-utils,
       impermanence,
+      niri,
       ...
     }:
     let
@@ -31,7 +33,8 @@
       ];
 
       desktopModules = [
-        ./modules/niri.nix
+        niri.nixosModules.niri
+        ./modules/niri-mod.nix
         # ./modules/xfce.nix
         ./modules/printer.nix
         ./modules/font.nix
@@ -42,7 +45,7 @@
         ./modules/wasmcloud.nix
         {
           services.xserver = {
-            enable = true;
+            enable = false;
             # displayManager.lightdm.enable = true;
             xkb.layout = "us";
           };
