@@ -48,7 +48,33 @@
       tmux
       tree
       wget
-      curl
+      (pkgs.stdenv.mkDerivation {
+        pname = "curl-static-h3";
+        version = "8.12.0";
+        src = pkgs.fetchurl {
+          url = "https://github.com/stunnel/static-curl/releases/download/8.12.0/curl-linux-x86_64-musl-8.12.0.tar.xz";
+          sha256 = "1wj9g4yapyhy4073pg0wxh728smasl7sbapmj79jjq1b1c24j262";
+        };
+
+        # Skip the default unpack phase
+        dontUnpack = true;
+
+        installPhase = ''
+          # Create a temporary directory for unpacking
+          mkdir -p tmpdir
+          cd tmpdir
+
+          # Unpack the archive
+          tar xf $src
+
+          # Create the output directory and copy the binaries
+          mkdir -p $out/bin
+          cp curl $out/bin/curl
+          chmod +x $out/bin/curl
+          cp trurl $out/bin/trurl
+          chmod +x $out/bin/trurl
+        '';
+      })
       fzf
       zsh-syntax-highlighting
       zsh-fzf-history-search
