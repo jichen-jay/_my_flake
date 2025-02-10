@@ -11,6 +11,8 @@
       "flakes"
     ];
     auto-optimise-store = true;
+    keep-outputs = true;
+    keep-derivations = true;
   };
 
   # Basic system packages
