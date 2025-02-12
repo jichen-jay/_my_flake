@@ -10,6 +10,7 @@
     netcat
     socat
     tcpdump
+    xca
     openssl
     # (rustPlatform.buildRustPackage rec {
     #   pname = "quiche";

@@ -31,7 +31,7 @@
     clipse
     grim # Screenshot utility.
     alacritty
-    fuzzel #  Application launcher.
+    fuzzel # Application launcher.
     gnome-themes-extra # Additional GTK themes.
     papirus-icon-theme
     adwaita-icon-theme
@@ -57,21 +57,21 @@
     zoom-us
     jetbrains-mono
   ];
-#  services.displayManager.sddm = {
-#    enable = true;
-#   wayland.enable = true;
-#  };
+  #  services.displayManager.sddm = {
+  #    enable = true;
+  #   wayland.enable = true;
+  #  };
 
-#   services.xserver.enable = false;
+  #   services.xserver.enable = false;
 
- services.xserver = {
-   enable = true;  # Required for input devices and display manager
-   displayManager.gdm = {
-     enable = true;
-     wayland = true;
+  services.xserver = {
+    enable = true; # Required for input devices and display manager
+    displayManager.gdm = {
+      enable = true;
+      wayland = true;
+    };
   };
-  };
- services.displayManager.defaultSession = "niri";
+  services.displayManager.defaultSession = "niri";
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1"; # Electron apps hint
@@ -82,6 +82,7 @@
     CLUTTER_BACKEND = "wayland";
     XDG_RUNTIME_DIR = "/run/user/$(id -u)";
     # GSK_RENDERER = "ngl";
+    PATH = [ "/run/wrappers/bin" ];
   };
 
   services.displayManager.sessionPackages = [
@@ -104,6 +105,13 @@
     })
   ];
 
+  programs.wireshark = {
+    enable = true;
+    package = pkgs.wireshark;
+  };
+
+  users.groups.wireshark = { };
+  users.users.jaykchen.extraGroups = [ "wireshark" ];
 
   services.pipewire = {
     enable = true;
