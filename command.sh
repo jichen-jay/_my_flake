@@ -127,6 +127,18 @@ sudo NIX_SSHOPTS="-i /home/jaykchen/.ssh/pn53_id_rsa" \
   --build-host jaykchen@10.0.0.40 \
   --flake .#md16
 
+//On the target machine (10.0.0.40), edit the sudoers file:
+sudo visudo
+jaykchen ALL=(ALL) NOPASSWD: /run/current-system/sw/bin/nixos-rebuild
+
+//SSH agent forwarding flag
+NIX_SSHOPTS="-A -i /home/jaykchen/.ssh/pn53_id_rsa" \
+nixos-rebuild switch \
+  --use-remote-sudo \
+  --target-host jaykchen@10.0.0.40 \
+  --build-host jaykchen@10.0.0.40 \
+  --flake .#md16
+
 
 nix build .#nixosConfigurations.jaykchen.config.system.build.toplevel \
   --store 'ssh://jaykchen@10.0.0.93?remote-store=local?root=/' --flake .#pn53
