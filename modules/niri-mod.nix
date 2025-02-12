@@ -27,9 +27,13 @@
     dconf # GTK configuration.
     xwayland # Support for X11 applications via XWayland.
     wlroots
-    wl-clipboard # Clipboard tool compatible with Wayland.
+    wl-clipboard
+    wl-clip-persist
+    cliphist
     clipse
     grim # Screenshot utility.
+    swappy
+    slurp
     alacritty
     fuzzel # Application launcher.
     gnome-themes-extra # Additional GTK themes.
@@ -57,12 +61,6 @@
     zoom-us
     jetbrains-mono
   ];
-  #  services.displayManager.sddm = {
-  #    enable = true;
-  #   wayland.enable = true;
-  #  };
-
-  #   services.xserver.enable = false;
 
   services.xserver = {
     enable = true; # Required for input devices and display manager
@@ -83,6 +81,21 @@
     XDG_RUNTIME_DIR = "/run/user/$(id -u)";
     # GSK_RENDERER = "ngl";
     PATH = [ "/run/wrappers/bin" ];
+  };
+
+  services.niri = {
+    enable = true;
+    package = pkgs.niri;
+    configFile = pkgs.writeText "niri-config.kdl" ''
+      startup_commands: [
+        "wl-clip-persist --clipboard regular",
+        "cliphist init"
+      ]
+
+      keybinds: {
+        "Super+V" = "exec fuzzel --dmenu | cliphist decode | wl-copy"
+      }
+    '';
   };
 
   services.displayManager.sessionPackages = [
@@ -177,7 +190,11 @@
   };
 
   environment.persistence."/nix/persist" = {
-    directories = [ "/var/lib/nixos" ];
+    directories = [
+      "/var/lib/nixos"
+      "/home/jaykchen/.config/Code"
+      "/home/jaykchen/.vscode"
+    ];
   };
 
 }
