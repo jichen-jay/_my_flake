@@ -10,7 +10,7 @@
   imports = [
     inputs.niri.nixosModules.niri
   ];
-  # Enable experimental features for flakes.
+
   nix.settings = {
     experimental-features = [
       "nix-command"
@@ -21,19 +21,20 @@
     keep-derivations = true;
   };
 
-  # System packages.
   environment.systemPackages = with pkgs; [
     polkit # Authentication agent.
     xdg-desktop-portal-hyprland # Wayland portals for screen sharing and app permissions.
     dconf # GTK configuration.
     xwayland # Support for X11 applications via XWayland.
+    wlroots
     wl-clipboard # Clipboard tool compatible with Wayland.
     clipse
-    grimshot
     grim # Screenshot utility.
-    wofi # Application launcher.
+    alacritty
+    fuzzel #  Application launcher.
     gnome-themes-extra # Additional GTK themes.
     papirus-icon-theme
+    adwaita-icon-theme
     xdg-utils
     gsettings-desktop-schemas
     glib
@@ -56,23 +57,54 @@
     zoom-us
     jetbrains-mono
   ];
+#  services.displayManager.sddm = {
+#    enable = true;
+#   wayland.enable = true;
+#  };
 
-  # Use SDDM as the display manager with Wayland support.
-  services.displayManager.sddm = {
-    enable = true;
-    wayland.enable = true;
+#   services.xserver.enable = false;
+
+ services.xserver = {
+   enable = true;  # Required for input devices and display manager
+   displayManager.gdm = {
+     enable = true;
+     wayland = true;
   };
-  services.xserver.displayManager.defaultSession = "niri";
-  # Disable the traditional X server since Niri is a native Wayland compositor.
-  services.xserver.enable = false;
+  };
+ services.displayManager.defaultSession = "niri";
 
-  # Niri configuration.
-  programs.niri = {
-    enable = true;
-    package = pkgs.niri; # Use the stable package from nixpkgs (override with pkgs.niri-unstable if desired).
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1"; # Electron apps hint
+    WLR_NO_HARDWARE_CURSORS = "1"; # Fix cursor rendering issues
+    MOZ_ENABLE_WAYLAND = "1"; # For Firefox, but harmless for Chrome
+    XDG_SESSION_TYPE = "wayland";
+    QT_QPA_PLATFORM = "wayland";
+    CLUTTER_BACKEND = "wayland";
+    XDG_RUNTIME_DIR = "/run/user/$(id -u)";
+    # GSK_RENDERER = "ngl";
   };
 
-  # Audio configuration via Pipewire.
+  services.displayManager.sessionPackages = [
+    (pkgs.stdenv.mkDerivation {
+      name = "niri-session";
+      buildCommand = ''
+        mkdir -p $out/share/wayland-sessions
+        cat > $out/share/wayland-sessions/niri.desktop <<EOF
+        [Desktop Entry]
+        Name=Niri
+        Comment=Custom Niri Wayland Session
+        Exec=${pkgs.niri}/bin/niri
+        Type=Application
+        DesktopNames=niri
+        EOF
+      '';
+      passthru = {
+        providedSessions = [ "niri" ];
+      };
+    })
+  ];
+
+
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -80,7 +112,6 @@
     pulse.enable = true;
   };
 
-  # Core services.
   services.dbus.enable = true;
   security.rtkit.enable = true;
   services.printing.enable = true;
@@ -95,7 +126,6 @@
   programs.dconf.enable = true;
   programs.firefox.enable = true;
 
-  # Activation scripts for external app configurations.
   system.activationScripts.postmanConfig = {
     text = ''
       BACKUP_DIR="/home/jaykchen/postman-backup"
@@ -138,7 +168,6 @@
     deps = [ ];
   };
 
-  # System persistence directories.
   environment.persistence."/nix/persist" = {
     directories = [ "/var/lib/nixos" ];
   };

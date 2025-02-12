@@ -33,7 +33,6 @@
       ];
 
       desktopModules = [
-        niri.nixosModules.niri
         ./modules/niri-mod.nix
         # ./modules/xfce.nix
         ./modules/printer.nix
@@ -45,8 +44,6 @@
         ./modules/wasmcloud.nix
         {
           services.xserver = {
-            enable = false;
-            # displayManager.lightdm.enable = true;
             xkb.layout = "us";
           };
         }

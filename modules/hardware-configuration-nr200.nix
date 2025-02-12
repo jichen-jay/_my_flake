@@ -22,6 +22,8 @@
     };
   };
 
+  systemd.services.NetworkManager-wait-online.enable = false;
+
   boot.tmp.useTmpfs = true;
 
   boot.initrd.availableKernelModules = [
@@ -32,7 +34,12 @@
     "usb_storage"
     "sd_mod"
   ];
-  boot.initrd.kernelModules = [ ];
+
+  boot = {
+    kernelPackages = pkgs.linuxPackages_latest;
+    initrd.kernelModules = [ "amdgpu" ];
+  };
+
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
@@ -62,4 +69,15 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      mesa
+      amdvlk
+      rocmPackages.clr
+    ];
+
+  };
+
 }

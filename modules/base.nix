@@ -2,8 +2,31 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
+
+let
+  staticCurl = pkgs.stdenv.mkDerivation {
+    pname = "curl-static-h3";
+    version = "8.12.0";
+    src = pkgs.fetchurl {
+      url = "https://github.com/stunnel/static-curl/releases/download/8.12.0/curl-linux-x86_64-musl-8.12.0.tar.xz";
+      sha256 = "1wj9g4yapyhy4073pg0wxh728smasl7sbapmj79jjq1b1c24j262";
+    };
+    dontUnpack = true;
+    installPhase = ''
+      mkdir -p tmpdir
+      cd tmpdir
+      tar xf $src
+      mkdir -p $out/bin
+      cp curl $out/bin/curl-static
+      chmod +x $out/bin/curl-static
+      cp trurl $out/bin/trurl
+      chmod +x $out/bin/trurl
+    '';
+  };
+in
 
 {
   environment.pathsToLink = [ "/share/fish" ];
@@ -44,25 +67,8 @@
       tmux
       tree
       wget
-      (pkgs.stdenv.mkDerivation {
-        pname = "curl-static-h3";
-        version = "8.12.0";
-        src = pkgs.fetchurl {
-          url = "https://github.com/stunnel/static-curl/releases/download/8.12.0/curl-linux-x86_64-musl-8.12.0.tar.xz";
-          sha256 = "1wj9g4yapyhy4073pg0wxh728smasl7sbapmj79jjq1b1c24j262";
-        };
-        dontUnpack = true;
-        installPhase = ''
-          mkdir -p tmpdir
-          cd tmpdir
-          tar xf $src
-          mkdir -p $out/bin
-          cp curl $out/bin/curl
-          chmod +x $out/bin/curl
-          cp trurl $out/bin/trurl
-          chmod +x $out/bin/trurl
-        '';
-      })
+      staticCurl
+      curl
       fzf
       fishPlugins.foreign-env
       fishPlugins.fzf
@@ -79,6 +85,7 @@
     ];
 
     shellAliases = {
+      cs = "curl-static";
       ll = "ls -l";
       ci = "git commit";
       co = "git checkout";
