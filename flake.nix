@@ -1,7 +1,7 @@
 {
   description = "NixOS configuration with flakes, optimized for fish, Home Manager, and VSCode Server";
 
-  inputs = {
+  inputs = rec {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     nixos-vscode-server.url = "github:nix-community/nixos-vscode-server";
     flake-utils.url = "github:numtide/flake-utils";
@@ -18,8 +18,14 @@
       niri,
       ...
     }:
+
     let
-      pkgsForSystem = system: import nixpkgs { inherit system; };
+      pkgsForSystem =
+        system:
+        import nixpkgs {
+          inherit system;
+          overlays = [ niri.overlays.niri ];
+        };
 
       baseModules = [
         impermanence.nixosModules.impermanence
