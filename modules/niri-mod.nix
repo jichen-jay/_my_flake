@@ -33,6 +33,7 @@
     clipse
     grim # Screenshot utility.
     swappy
+    certbot
     slurp
     alacritty
     fuzzel # Application launcher.
@@ -56,6 +57,7 @@
       '';
     }))
     chromium
+    xvfb-run
     telegram-desktop
     font-manager
     zoom-us
@@ -76,6 +78,7 @@
     WLR_NO_HARDWARE_CURSORS = "1"; # Fix cursor rendering issues
     MOZ_ENABLE_WAYLAND = "1"; # For Firefox, but harmless for Chrome
     XDG_SESSION_TYPE = "wayland";
+    XDG_CURRENT_DESKTOP = "sway";
     QT_QPA_PLATFORM = "wayland";
     CLUTTER_BACKEND = "wayland";
     XDG_RUNTIME_DIR = "/run/user/$(id -u)";
@@ -187,3 +190,4 @@
   };
 
 }
+

@@ -49,7 +49,6 @@ sudo umount /home/jaykchen/.config/Postman
 rm -rf ~/.config
 
 
-
 sudo rm -rf ~/.config/git
 sudo rm -rf ~/.config/systemd
 sudo rm -rf ~/.config/environment.d

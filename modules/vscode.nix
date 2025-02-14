@@ -1,30 +1,32 @@
 { config, pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
-    vscode.fhs
+    (vscode.fhsWithPackages (ps: with ps; [
+      rustup
+      zlib
+      openssl.dev
+      pkg-config
+    ]))
     nixfmt-rfc-style
     piper
     libratbag
     jetbrains.rust-rover
   ];
 
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
   services.vscode-server = {
     enable = true;
     enableFHS = true;
   };
 
-  # Add VSCode directory to persistence
-  environment.persistence."/nix/persist" = {
-    directories = [
-    ];
-  };
+  system.activationScripts.vsCodeSettings = ''
+    # Create required directories
+    mkdir -p /home/jaykchen/.config/Code/User
+    mkdir -p /home/jaykchen/.vscode/extensions
 
-  system.activationScripts.vscodeSettings = ''
-        mkdir -p /home/jaykchen/.config/Code/User
-
-        # Write settings.json if it does not exist.
-        if [ ! -f /home/jaykchen/.config/Code/User/settings.json ]; then
-          cat > /home/jaykchen/.config/Code/User/settings.json <<'EOF'
+    # Write settings.json
+    cat > /home/jaykchen/.config/Code/User/settings.json <<'EOL'
     {
       "window.restoreWindows": "none",
       "window.reopenFolders": "none",
@@ -84,7 +86,9 @@
       "remote.SSH.showLoginTerminal": true,
       "remote.SSH.useLocalServer": false,
       "remote.SSH.configFile": "~/.ssh/config",
-      "remote.SSH.defaultExtensions": ["ms-vscode.remote-ssh"],
+      "remote.SSH.defaultExtensions": [
+        "ms-vscode.remote-ssh"
+      ],
       "remote.SSH.remotePlatform": {
         "b550": "linux",
         "md16": "linux",
@@ -92,12 +96,10 @@
         "cloud": "linux"
       }
     }
-    EOF
-        fi
+    EOL
 
-        # Write keybindings.json if it does not exist.
-        if [ ! -f /home/jaykchen/.config/Code/User/keybindings.json ]; then
-          cat > /home/jaykchen/.config/Code/User/keybindings.json <<'EOF'
+    # Write keybindings.json
+    cat > /home/jaykchen/.config/Code/User/keybindings.json <<'EOL'
     [
       {
         "key": "ctrl+w",
@@ -147,10 +149,13 @@
         "when": "editorTextFocus"
       }
     ]
-    EOF
-        fi
+    EOL
 
-        chown -R jaykchen:users /home/jaykchen/.config/Code
-        chmod -R 700 /home/jaykchen/.config/Code
+    # Set proper ownership
+    chown -R jaykchen:users /home/jaykchen/.vscode
+    chown -R jaykchen:users /home/jaykchen/.config/Code
+    chmod 755 /home/jaykchen/.config/Code/User
+    chmod 644 /home/jaykchen/.config/Code/User/keybindings.json
   '';
 }
+
