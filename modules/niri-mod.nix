@@ -22,32 +22,38 @@
   };
 
   environment.systemPackages = with pkgs; [
-    polkit # Authentication agent.
-    xdg-desktop-portal-hyprland # Wayland portals for screen sharing and app permissions.
-    dconf # GTK configuration.
-    xwayland # Support for X11 applications via XWayland.
-    wlroots
+    polkit
+    xdg-desktop-portal
+    xdg-desktop-portal-gtk
+    dconf
+    xwayland
     wl-clipboard
     wl-clip-persist
     cliphist
     clipse
-    grim # Screenshot utility.
+    autocutsel
+    grim
     swappy
     certbot
     slurp
     alacritty
-    fuzzel # Application launcher.
-    gnome-themes-extra # Additional GTK themes.
+    sqlite
+    fuzzel
+    gnome-themes-extra
     papirus-icon-theme
     adwaita-icon-theme
     xdg-utils
     gsettings-desktop-schemas
     glib
     wireshark
+    qt5.qtwayland
+    qt6.qtwayland
+    pipewire
+    xwaylandvideobridge
     (google-chrome.override {
       commandLineArgs = [
         "--no-sandbox"
-        "--enable-features=UseOzonePlatform"
+        "--enable-features=UseOzonePlatform,WebRTCPipeWireCapturer"
         "--ozone-platform=wayland"
       ];
     })
@@ -64,25 +70,144 @@
     jetbrains-mono
   ];
 
+  # Updated xdg.portal configuration
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    config = {
+      common = {
+        default = [ "gtk" ];
+      };
+      niri = {
+        default = [ "gtk" ];
+        "org.freedesktop.impl.portal.Screenshot" = [ "gtk" ];
+        "org.freedesktop.impl.portal.Settings" = [ "gtk" ];
+      };
+    };
+    xdgOpenUsePortal = true;
+  };
+
+  systemd.user.services."niri-config" = {
+    enable = true;
+    description = "Generate Niri config";
+    wantedBy = [ "default.target" ];
+    serviceConfig = {
+      ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p ~/.config/niri";
+      ExecStart = ''
+              ${pkgs.coreutils}/bin/cat > ~/.config/niri/config << EOF
+        input {
+            keyboard {
+                xkb {
+                    layout = "us"
+                }
+            }
+        }
+
+        window-rule {
+            match app-id="clipse"
+            open-floating true
+            default-column-width { fixed 622; }
+            default-window-height { fixed 652; }
+        }
+
+        keybinds {
+            SUPER+CTRL+F = exec ${pkgs.alacritty}/bin/alacritty --class clipse -e ${pkgs.clipse}/bin/clipse
+            SUPER+CTRL+V = exec cliphist list | fuzzel --dmenu | cliphist decode | wl-copy
+        }
+
+        output {
+            # You can get your output names from 'niri msg outputs'
+            "*" {
+                scale = 1.0
+            }
+        }
+
+        layout {
+            # Whether to use gaps between views in the tiling layout
+            gaps = 8
+
+            # Whether to add a gap between views and the screen edge
+            screen-gap = 8
+        }
+        EOF
+      '';
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+  };
+
+  systemd.user.services.clipboard-manager = {
+    enable = true;
+    description = "Clipboard manager service (clipse)";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.clipse}/bin/clipse -daemon";
+      Type = "simple";
+      Restart = "always";
+      RestartSec = "5";
+      Environment = [
+        "WAYLAND_DISPLAY=wayland-0"
+        "XDG_RUNTIME_DIR=/run/user/%U"
+        "DISPLAY=:0"
+      ];
+    };
+  };
+
+  systemd.user.services.clipboard-history = {
+    enable = true;
+    description = "Clipboard history service (cliphist and wl-clipboard)";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      ExecStart = ''
+        ${pkgs.bash}/bin/bash -c '\
+          ${pkgs.wl-clipboard}/bin/wl-paste --type text --watch ${pkgs.cliphist}/bin/cliphist store & \
+          ${pkgs.wl-clipboard}/bin/wl-paste --type image --watch ${pkgs.cliphist}/bin/cliphist store & \
+          ${pkgs.wl-clip-persist}/bin/wl-clip-persist --clipboard both & \
+          wait'
+      '';
+      Type = "simple";
+      Restart = "always";
+    };
+  };
+
+  systemd.user.services.portal-config = {
+    enable = true;
+    description = "Portal configuration setup";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    script = ''
+      mkdir -p ~/.config/systemd/user/xdg-desktop-portal.service.d/
+      cat > ~/.config/systemd/user/xdg-desktop-portal.service.d/override.conf << EOF
+      [Service]
+      Environment="XDG_CURRENT_DESKTOP=niri"
+      EOF
+      systemctl --user daemon-reload
+      systemctl --user restart xdg-desktop-portal.service
+    '';
+  };
+
   services.xserver = {
-    enable = true; # Required for input devices and display manager
+    enable = true;
     displayManager.gdm = {
       enable = true;
       wayland = true;
     };
   };
+
   services.displayManager.defaultSession = "niri";
 
   environment.sessionVariables = {
-    NIXOS_OZONE_WL = "1"; # Electron apps hint
-    WLR_NO_HARDWARE_CURSORS = "1"; # Fix cursor rendering issues
-    MOZ_ENABLE_WAYLAND = "1"; # For Firefox, but harmless for Chrome
+    NIXOS_OZONE_WL = "1";
+    WLR_NO_HARDWARE_CURSORS = "1";
+    MOZ_ENABLE_WAYLAND = "1";
     XDG_SESSION_TYPE = "wayland";
-    XDG_CURRENT_DESKTOP = "sway";
+    XDG_CURRENT_DESKTOP = "niri";
+    XDG_SESSION_DESKTOP = "niri";
     QT_QPA_PLATFORM = "wayland";
     CLUTTER_BACKEND = "wayland";
     XDG_RUNTIME_DIR = "/run/user/$(id -u)";
-    # GSK_RENDERER = "ngl";
     PATH = [ "/run/wrappers/bin" ];
   };
 
@@ -125,7 +250,15 @@
     pulse.enable = true;
   };
 
-  services.dbus.enable = true;
+  # Updated dbus configuration
+  services.dbus = {
+    enable = true;
+    packages = [
+      pkgs.xdg-desktop-portal
+      pkgs.xdg-desktop-portal-gtk
+    ];
+  };
+
   security.rtkit.enable = true;
   services.printing.enable = true;
   security.pam.services.login.enableGnomeKeyring = true;
@@ -188,6 +321,4 @@
       "/home/jaykchen/.vscode"
     ];
   };
-
 }
-

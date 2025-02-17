@@ -7,6 +7,8 @@
     flake-utils.url = "github:numtide/flake-utils";
     impermanence.url = "github:nix-community/impermanence";
     niri.url = "github:sodiboo/niri-flake";
+    fps.url = "github:wamserma/flake-programs-sqlite";
+    fps.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -16,6 +18,7 @@
       flake-utils,
       impermanence,
       niri,
+      fps,
       ...
     }:
 
@@ -28,6 +31,7 @@
         };
 
       baseModules = [
+        fps.nixosModules.programs-sqlite
         impermanence.nixosModules.impermanence
         ./modules/users.nix
         ./modules/base.nix

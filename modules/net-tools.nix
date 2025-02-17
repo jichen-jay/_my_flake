@@ -8,6 +8,7 @@
     natscli
     inetutils
     netcat
+    lsof
     socat
     tcpdump
     xca
