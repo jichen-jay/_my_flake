@@ -79,6 +79,7 @@ in
       bat
       jq
       file
+      p7zip
       tokei
       gcc-unwrapped
       pkgs.starship

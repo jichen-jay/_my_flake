@@ -25,8 +25,11 @@
     polkit
     xdg-desktop-portal
     xdg-desktop-portal-gtk
+    xdg-desktop-portal-wlr
+    kicad
     dconf
     xwayland
+    wev
     wl-clipboard
     wl-clip-persist
     cliphist
@@ -70,64 +73,86 @@
     jetbrains-mono
   ];
 
-  # Updated xdg.portal configuration
   xdg.portal = {
     enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal-wlr
+    ];
     config = {
-      common = {
-        default = [ "gtk" ];
-      };
+      # common = {
+      #   default = [
+      #     "gtk"
+      #     "wlr"
+      #   ];
+      # };
       niri = {
-        default = [ "gtk" ];
-        "org.freedesktop.impl.portal.Screenshot" = [ "gtk" ];
+        default = [
+          "gtk"
+          "wlr"
+        ];
+        "org.freedesktop.impl.portal.Screenshot" = [ "wlr" ];
+        "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];
         "org.freedesktop.impl.portal.Settings" = [ "gtk" ];
+        "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
       };
     };
     xdgOpenUsePortal = true;
   };
+
+  programs.thunar.enable = true;
+  services.gvfs.enable = true; # For mounting and trash support
+  services.tumbler.enable = true; # For thumbnails
 
   systemd.user.services."niri-config" = {
     enable = true;
     description = "Generate Niri config";
     wantedBy = [ "default.target" ];
     serviceConfig = {
-      ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p ~/.config/niri";
-      ExecStart = ''
-              ${pkgs.coreutils}/bin/cat > ~/.config/niri/config << EOF
+      ExecStart = pkgs.writeShellScriptBin "niri-config-script" ''
+                mkdir -p $HOME/.config/niri
+                cat > $HOME/.config/niri/config <<EOF
         input {
-            keyboard {
-                xkb {
-                    layout = "us"
-                }
+          keyboard {
+            xkb {
+              layout = "us"
             }
+          }
         }
 
         window-rule {
-            match app-id="clipse"
-            open-floating true
-            default-column-width { fixed 622; }
-            default-window-height { fixed 652; }
+          match app-id="fuzzel"
+          keyboard-interactivity = "exclusive"; # Ensure focus for pop-up windows
+
+          match app-id="clipse"
+          open-floating true;
+          default-column-width { fixed 622; }
+          default-window-height { fixed 652; }
         }
 
-        keybinds {
-            SUPER+CTRL+F = exec ${pkgs.alacritty}/bin/alacritty --class clipse -e ${pkgs.clipse}/bin/clipse
-            SUPER+CTRL+V = exec cliphist list | fuzzel --dmenu | cliphist decode | wl-copy
+        binds {
+          # Toggle shortcut inhibition
+          Mod+Escape { toggle-keyboard-shortcuts-inhibit; }
+
+          # Clipboard History
+          SUPER+CTRL+F allow-inhibiting=false { spawn "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"; }
+
+          # Screenshot to Clipboard
+          SUPER+CTRL+S allow-inhibiting=false { spawn "grim -g \$(slurp) - | wl-copy --type image/png"; }
+
+          # Launch Clip-Based Application (clipse)
+          SUPER+ALT+C allow-inhibiting=false { spawn "${pkgs.alacritty}/bin/alacritty --class clipse -e ${pkgs.clipse}/bin/clipse"; }
         }
 
         output {
-            # You can get your output names from 'niri msg outputs'
-            "*" {
-                scale = 1.0
-            }
+          "*" {
+            scale = 1.0;
+          }
         }
 
         layout {
-            # Whether to use gaps between views in the tiling layout
-            gaps = 8
-
-            # Whether to add a gap between views and the screen edge
-            screen-gap = 8
+          gaps = 8;
+          screen-gap = 8;
         }
         EOF
       '';
@@ -160,13 +185,15 @@
     wantedBy = [ "graphical-session.target" ];
     after = [ "graphical-session.target" ];
     serviceConfig = {
-      ExecStart = ''
-        ${pkgs.bash}/bin/bash -c '\
-          ${pkgs.wl-clipboard}/bin/wl-paste --type text --watch ${pkgs.cliphist}/bin/cliphist store & \
-          ${pkgs.wl-clipboard}/bin/wl-paste --type image --watch ${pkgs.cliphist}/bin/cliphist store & \
-          ${pkgs.wl-clip-persist}/bin/wl-clip-persist --clipboard both & \
-          wait'
-      '';
+      ExecStart =
+        let
+          script = pkgs.writeShellScriptBin "clipboard-history-script" ''
+            ${pkgs.wl-clipboard}/bin/wl-paste --type text --watch | ${pkgs.cliphist}/bin/cliphist store &
+            ${pkgs.wl-clipboard}/bin/wl-paste --type image --watch | ${pkgs.cliphist}/bin/cliphist store &
+            wait
+          '';
+        in
+        "${script}/bin/clipboard-history-script"; # <-- Fix path to include /bin/
       Type = "simple";
       Restart = "always";
     };
@@ -174,18 +201,19 @@
 
   systemd.user.services.portal-config = {
     enable = true;
+      before = [ "xdg-desktop-portal.service" ];
     description = "Portal configuration setup";
     wantedBy = [ "graphical-session.target" ];
     after = [ "graphical-session.target" ];
-    script = ''
-      mkdir -p ~/.config/systemd/user/xdg-desktop-portal.service.d/
-      cat > ~/.config/systemd/user/xdg-desktop-portal.service.d/override.conf << EOF
-      [Service]
-      Environment="XDG_CURRENT_DESKTOP=niri"
-      EOF
-      systemctl --user daemon-reload
-      systemctl --user restart xdg-desktop-portal.service
-    '';
+  script = ''
+    mkdir -p ~/.config/systemd/user/xdg-desktop-portal.service.d/
+    cat > ~/.config/systemd/user/xdg-desktop-portal.service.d/override.conf << EOF
+    [Service]
+    Environment="XDG_CURRENT_DESKTOP=niri"
+    Environment="WAYLAND_DISPLAY=wayland-0"
+    EOF
+    systemctl --user restart xdg-desktop-portal
+  '';
   };
 
   services.xserver = {
@@ -205,15 +233,23 @@
     XDG_SESSION_TYPE = "wayland";
     XDG_CURRENT_DESKTOP = "niri";
     XDG_SESSION_DESKTOP = "niri";
+    GDK_BACKEND = "wayland";
     QT_QPA_PLATFORM = "wayland";
     CLUTTER_BACKEND = "wayland";
     XDG_RUNTIME_DIR = "/run/user/$(id -u)";
+    # XDG_DATA_DIRS = "/run/current-system/sw/share:/home/jaykchen/.nix-profile/share:/nix/profile/share";
     PATH = [ "/run/wrappers/bin" ];
   };
 
   programs.niri = {
     package = pkgs.niri;
   };
+
+systemd.user.services.niri.serviceConfig.ExecStartPre = [
+  "${pkgs.systemd}/bin/systemctl --user import-environment XDG_CURRENT_DESKTOP WAYLAND_DISPLAY"
+  "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd XDG_CURRENT_DESKTOP=niri"
+];
+
 
   services.displayManager.sessionPackages = [
     (pkgs.stdenv.mkDerivation {
@@ -256,6 +292,7 @@
     packages = [
       pkgs.xdg-desktop-portal
       pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal-wlr
     ];
   };
 
